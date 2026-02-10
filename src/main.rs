@@ -1,5 +1,5 @@
 use faithea::{get, handlers, server::HttpServer};
-use huihui_server::{handlers::auth_handlers, init_db};
+use huihui_server::{handlers::{auth_handlers, food_handlers}, init_db};
 
 #[get("/")]
 async fn hello() {
@@ -13,6 +13,7 @@ async fn main() {
     let _ = HttpServer::builder()
         .mount("/", handlers!(hello))
         .mount("/auth", auth_handlers())
+        .mount("/food", food_handlers())
         .host("0.0.0.0")
         .build()
         .run()
