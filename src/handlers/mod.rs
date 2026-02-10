@@ -4,5 +4,5 @@ pub mod auth;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
-    handlers!(auth::login, auth::register)
+    handlers!(auth::login, auth::register, auth::me)
 }

@@ -1,6 +1,6 @@
-use faithea::{data::Json, post};
+use faithea::{data::{Json, inbound::FromRequest}, get, post};
 
-use crate::{model::{ApiResponse, input::{RegisterInput, UsernamePasswordAuthentication}}, service};
+use crate::{model::{ApiResponse, input::{RegisterInput, UsernamePasswordAuthentication}}, service::{self, auth::CurrentUserId}};
 
 
 
@@ -13,5 +13,11 @@ async fn login(auth:Json<UsernamePasswordAuthentication>) {
 #[post("/register")]
 async fn register(input: Json<RegisterInput>) {
     let res: ApiResponse<_> = service::auth::register(input.0).await.into();
+    res.json()
+}
+
+#[get("/me")]
+async fn me(user_id:FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::auth::me(user_id.into_inner().0).await.into();
     res.json()
 }
