@@ -9,3 +9,7 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
     let foods = source::food::init_suggest(tags).await?;
     Ok(foods)
 }
+
+pub async fn consecutive_suggest(_food_ids: Vec<i32>) -> Result<Vec<FoodRow>, ServiceError> {
+    Ok(Vec::new())
+}
