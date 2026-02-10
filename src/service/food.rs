@@ -11,5 +11,6 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
 }
 
 pub async fn consecutive_suggest(_food_ids: Vec<i32>) -> Result<Vec<FoodRow>, ServiceError> {
+    let _un_selected_food = source::food::list_food_not_in_ids(_food_ids).await?;
     Ok(Vec::new())
 }
