@@ -6,3 +6,40 @@ CREATE TABLE "_user" (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE "restaurant" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(255) NOT NULL,
+    image VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE "food" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    restaurant_id int NOT NULL REFERENCES "restaurant"(id),
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE "tag" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    image VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE "food_tag" (
+    food_id int NOT NULL REFERENCES "food"(id),
+    tag_id int NOT NULL REFERENCES "tag"(id),
+    PRIMARY KEY (food_id, tag_id)
+);
+
+CREATE TABLE "operation" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id int NOT NULL REFERENCES "_user"(id),
+    food_id int NOT NULL REFERENCES "food"(id),
+    name VARCHAR(255) NOT NULL,
+    weight FLOAT4 NOT NULL
+);

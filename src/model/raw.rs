@@ -10,3 +10,10 @@ pub struct User {
     pub created_at: DateTime<Local>,
     pub updated_at: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct Tag {
+    pub id: i32,
+    pub name: String,
+    pub image: String,
+}
