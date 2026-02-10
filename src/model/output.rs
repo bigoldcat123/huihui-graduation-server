@@ -9,6 +9,11 @@ pub struct CurrentUser {
     pub email: String,
     pub name: String,
 }
+
+#[derive(Serialize,Deserialize)]
+pub struct AuthResult {
+    pub token: String,
+}
 impl From<raw::User> for CurrentUser {
     fn from(user: raw::User) -> Self {
         CurrentUser {
