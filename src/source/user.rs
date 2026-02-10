@@ -23,3 +23,15 @@ pub async fn get_user_by_email(email: &str) -> Result<User, sqlx::Error> {
         .await?;
     Ok(user)
 }
+
+pub async fn create_user(email: &str, username: &str, password: &str) -> Result<User, sqlx::Error> {
+    let user: User = sqlx::query_as(
+        "INSERT INTO _user (email, username, password) VALUES ($1, $2, $3) RETURNING *",
+    )
+    .bind(email)
+    .bind(username)
+    .bind(password)
+    .fetch_one(db())
+    .await?;
+    Ok(user)
+}
