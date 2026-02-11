@@ -17,7 +17,7 @@ async fn register(input: Json<RegisterInput>) {
 }
 
 #[get("/me")]
-async fn me(user_id:FromRequest<CurrentUserId>) {
+async fn me(user_id:FromRequest<CurrentUserId>,_token:FromRequest<CurrentUserId>) {
     let res: ApiResponse<_> = service::auth::me(user_id.into_inner().0).await.into();
     res.json()
 }
