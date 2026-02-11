@@ -1,4 +1,6 @@
-use crate::{service::error::ServiceError, source};
+use std::collections::HashMap;
+
+use crate::{model::{input::SuggestionInput, raw::Tag}, service::error::ServiceError, source};
 use source::food::FoodRow;
 
 pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
@@ -10,7 +12,68 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
     Ok(foods)
 }
 
-pub async fn consecutive_suggest(_food_ids: Vec<i32>) -> Result<Vec<FoodRow>, ServiceError> {
-    let _un_selected_food = source::food::list_food_not_in_ids(_food_ids).await?;
-    Ok(Vec::new())
+pub async fn consecutive_suggest(ipt:SuggestionInput) -> Result<Vec<FoodRow>, ServiceError> {
+    let selected_food = source::food::list_food_in_ids(&ipt.selected_food_ids).await?;
+    let mut unselected_food = source::food::list_food_not_in_ids(&ipt.food_ids).await?;
+    println!("{:?}",ipt.food_ids);
+    println!("{:?}",unselected_food.iter().map(|x| x.name.as_str()).collect::<Vec<_>>());
+
+    if selected_food.is_empty(){
+        return Ok(unselected_food[unselected_food.len() - 4..].iter().cloned().collect())
+    }
+    let mut selected_foodtags = HashMap::new();
+    for food in &selected_food {
+        let tags = source::tag::list_food_tags(food.id).await?;
+        selected_foodtags.insert(food.id, tags);
+    }
+    let user_profile = cal_user_profile(selected_foodtags);
+    let mut unselected_foodtags = HashMap::new();
+    for food in &unselected_food {
+        let tags = source::tag::list_food_tags(food.id).await?;
+        unselected_foodtags.insert(food.id, tags);
+    }
+    let mut food_factor = HashMap::new();
+    for (f_id, tags) in unselected_foodtags {
+        food_factor.insert(f_id, test_food(&user_profile, &tags));
+    }
+    unselected_food.sort_by(|a, b| {
+        let a = food_factor.get(&a.id).copied().unwrap_or_default();
+        let b = food_factor.get(&b.id).copied().unwrap_or_default();
+        a.partial_cmp(&b).expect("float compare failed")
+    });
+    if unselected_food.len() < 4 {
+        Ok(unselected_food)
+    }else {
+        Ok(unselected_food[unselected_food.len() - 4..].iter().cloned().collect())
+    }
+}
+
+pub fn cal_user_profile(food_tags: HashMap<i32, Vec<Tag>>) -> HashMap<i32, f32> {
+    let total_weight = food_tags.values().map(|x| x.len()).sum::<usize>() as f32;
+
+    if total_weight == 0.0 {
+        return HashMap::new();
+    }
+
+    let mut ans = HashMap::new();
+    for (_, tags) in food_tags {
+        for t in tags {
+            *ans.entry(t.id).or_default() += 1.0;
+        }
+    }
+    for (_, count) in &mut ans {
+        *count /= total_weight;
+    }
+
+    ans
+}
+
+fn test_food(user_vector: &HashMap<i32, f32>, food_tags: &Vec<Tag>) -> f32 {
+    let mut dot = 0.0;
+    for t in food_tags {
+        dot += user_vector.get(&t.id).copied().unwrap_or_default();
+    }
+    let user_m = user_vector.values().map(|x| x * x).sum::<f32>().sqrt();
+    let food_m = (food_tags.len() as f32).sqrt();
+    dot / (user_m * food_m)
 }

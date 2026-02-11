@@ -44,7 +44,39 @@ pub async fn init_suggest(tags: Vec<Tag>) -> Result<Vec<FoodRow>, sqlx::Error> {
     Ok(result)
 }
 
-pub async fn list_food_not_in_ids(ids: Vec<i32>) -> Result<Vec<FoodRow>, sqlx::Error> {
+pub async fn list_foods() -> Result<Vec<FoodRow>, sqlx::Error> {
+    let foods: Vec<FoodRow> = sqlx::query_as(
+        r#"
+        SELECT id, restaurant_id, name, description, image
+        FROM food
+        ORDER BY id
+        "#,
+    )
+    .fetch_all(db())
+    .await?;
+    Ok(foods)
+}
+
+pub async fn list_food_not_in_ids(ids: &Vec<i32>) -> Result<Vec<FoodRow>, sqlx::Error> {
+    if ids.is_empty() {
+        return list_foods().await;
+    }
+
+    let foods: Vec<FoodRow> = sqlx::query_as(
+        r#"
+        SELECT id, restaurant_id, name, description, image
+        FROM food
+        WHERE id != ALL($1)
+        ORDER BY id
+        "#,
+    )
+    .bind(ids)
+    .fetch_all(db())
+    .await?;
+    Ok(foods)
+}
+
+pub async fn list_food_in_ids(ids: &Vec<i32>) -> Result<Vec<FoodRow>, sqlx::Error> {
     if ids.is_empty() {
         return Ok(Vec::new());
     }
@@ -53,7 +85,7 @@ pub async fn list_food_not_in_ids(ids: Vec<i32>) -> Result<Vec<FoodRow>, sqlx::E
         r#"
         SELECT id, restaurant_id, name, description, image
         FROM food
-        WHERE id != ANY($1)
+        WHERE id = ANY($1)
         ORDER BY id
         "#,
     )
