@@ -18,3 +18,19 @@ pub struct SuggestionInput{
     pub food_ids: Vec<i32>,
     pub selected_food_ids: Vec<i32>,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "lowercase")]
+pub enum Reaction {
+    Like,
+    Skip,
+    Dislike,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RecommendationReactionInput {
+    pub food_id: i32,
+    pub reaction: Reaction,
+    pub source: String,
+    pub occurred_at: i64,
+}

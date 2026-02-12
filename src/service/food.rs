@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{model::{input::SuggestionInput, raw::Tag}, service::error::ServiceError, source::{self, operation}};
+use crate::{model::{input::{Reaction, RecommendationReactionInput, SuggestionInput}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
 use source::food::FoodRow;
 
 pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
@@ -10,6 +10,26 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
     }
     let foods = source::food::init_suggest(tags).await?;
     Ok(foods)
+}
+
+pub async fn recommendation(_user_id: i32) -> Result<Vec<FoodRow>, ServiceError> {
+    let foods = source::food::list_foods().await?;
+    Ok(foods)
+}
+
+pub async fn save_reaction(user_id: i32, ipt: RecommendationReactionInput) -> Result<i32, ServiceError> {
+    let reaction_name = match ipt.reaction {
+        Reaction::Like => "like",
+        Reaction::Skip => "skip",
+        Reaction::Dislike => "dislike",
+    };
+    let weight = match ipt.reaction {
+        Reaction::Like => 1.0,
+        Reaction::Skip => 0.0,
+        Reaction::Dislike => -1.0,
+    };
+    let op_id = operation::save_operation(user_id, ipt.food_id, reaction_name, weight).await?;
+    Ok(op_id)
 }
 
 pub async fn consecutive_suggest(ipt:SuggestionInput,user_id:i32) -> Result<Vec<FoodRow>, ServiceError> {

@@ -9,5 +9,5 @@ pub fn auth_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn food_handlers() -> Vec<HandlerModifier> {
-    handlers!(food::consecutive_suggest)
+    handlers!(food::recommendation, food::recommendation_reaction, food::consecutive_suggest)
 }
