@@ -43,3 +43,18 @@ CREATE TABLE "operation" (
     name VARCHAR(255) NOT NULL,
     weight FLOAT4 NOT NULL
 );
+
+CREATE TABLE "topic" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id int NOT NULL REFERENCES "_user"(id),
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    images TEXT NULL,
+    create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "reply" (
+    comment_id int NOT NULL REFERENCES "topic"(id),
+    comment_to_id int NOT NULL REFERENCES "topic"(id),
+    PRIMARY KEY (comment_id, comment_to_id)
+);

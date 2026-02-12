@@ -27,5 +27,6 @@ images
 create_at
 
 ## reply 
-tid(fk topic.id)
-tid(fk topic.id)
+comment_id(fk topic.id)
+comment_to_id(fk topic.id)
+pk(comment_id,comment_to_id)
