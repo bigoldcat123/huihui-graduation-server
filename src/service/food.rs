@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{model::{input::SuggestionInput, raw::Tag}, service::error::ServiceError, source};
+use crate::{model::{input::SuggestionInput, raw::Tag}, service::error::ServiceError, source::{self, operation}};
 use source::food::FoodRow;
 
 pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
@@ -12,11 +12,16 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
     Ok(foods)
 }
 
-pub async fn consecutive_suggest(ipt:SuggestionInput) -> Result<Vec<FoodRow>, ServiceError> {
+pub async fn consecutive_suggest(ipt:SuggestionInput,user_id:i32) -> Result<Vec<FoodRow>, ServiceError> {
+
+    for &s_id in ipt.selected_food_ids.iter() {
+        let _ = operation::save_operation(user_id, s_id, "like", 1.0).await?;
+    }
+
     let selected_food = source::food::list_food_in_ids(&ipt.selected_food_ids).await?;
     let mut unselected_food = source::food::list_food_not_in_ids(&ipt.food_ids).await?;
-    println!("{:?}",ipt.food_ids);
-    println!("{:?}",unselected_food.iter().map(|x| x.name.as_str()).collect::<Vec<_>>());
+    // println!("{:?}",ipt.food_ids);
+    // println!("{:?}",unselected_food.iter().map(|x| x.name.as_str()).collect::<Vec<_>>());
 
     if selected_food.is_empty(){
         return Ok(unselected_food[unselected_food.len() - 4..].iter().cloned().collect())
@@ -44,7 +49,10 @@ pub async fn consecutive_suggest(ipt:SuggestionInput) -> Result<Vec<FoodRow>, Se
     if unselected_food.len() < 4 {
         Ok(unselected_food)
     }else {
-        Ok(unselected_food[unselected_food.len() - 4..].iter().cloned().collect())
+        let mut ans:Vec<FoodRow> = unselected_food[unselected_food.len() - 2..].iter().cloned().collect();
+        ans.push(unselected_food[0].clone());
+        ans.push(unselected_food[unselected_food.len() / 2].clone());
+        Ok(ans)
     }
 }
 
