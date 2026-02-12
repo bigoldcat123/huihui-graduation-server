@@ -7,7 +7,7 @@ use crate::{
     source,
 };
 use chrono::{Duration, Utc};
-use faithea::{handler::types::HttpHandlerError, header::AUTHORIZATION, request::TryFromRequest};
+use faithea::{error::BeforeHandlerError, header::AUTHORIZATION, request::TryFromRequest};
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -26,17 +26,17 @@ impl<'a> TryFromRequest<'a> for CurrentUserId {
     ) -> Result<Self, faithea::handler::types::HttpHandlerError> {
         let token = req
             .get_header(AUTHORIZATION)
-            .ok_or(faithea::handler::types::HttpHandlerError::before_handler_param_not_exist())?;
+            .ok_or(faithea::handler::types::HttpHandlerError::BeforeHandler(BeforeHandlerError::ParamNotExist))?;
         let token = token
             .to_str()
             .map_err(|_| {
-                faithea::handler::types::HttpHandlerError::before_handler_param_not_exist()
+                faithea::handler::types::HttpHandlerError::BeforeHandler(BeforeHandlerError::ParamNotExist)
             })?
             .split_once(" ")
-            .ok_or(HttpHandlerError::before_handler_param_not_exist())?
+            .ok_or(faithea::handler::types::HttpHandlerError::BeforeHandler(BeforeHandlerError::ParamNotExist))?
             .1;
         let claims =
-            verify_token(token).map_err(|_| HttpHandlerError::before_handler_param_not_exist())?;
+            verify_token(token).map_err(|_| faithea::handler::types::HttpHandlerError::BeforeHandler(BeforeHandlerError::ParamNotExist))?;
         Ok(CurrentUserId(claims.sub))
     }
 }

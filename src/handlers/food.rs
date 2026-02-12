@@ -4,7 +4,8 @@ use crate::{model::{ApiResponse, input::{RecommendationReactionInput, Suggestion
 
 #[get("/recommendation")]
 async fn recommendation(token: FromRequest<CurrentUserId>) {
-    let res: ApiResponse<_> = service::food::recommendation(token.into_inner().0).await.into();
+    println!("{:?}",token.into_inner().0);
+    let res: ApiResponse<_> = service::food::recommendation(1).await.into();
     res.json()
 }
 
@@ -13,6 +14,7 @@ async fn recommendation_reaction(
     ipt: Json<RecommendationReactionInput>,
     token: FromRequest<CurrentUserId>,
 ) {
+    println!("{:?}",ipt);
     let res: ApiResponse<_> = service::food::save_reaction(token.into_inner().0, ipt.0).await.into();
     res.json()
 }

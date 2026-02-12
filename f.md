@@ -17,3 +17,15 @@ id pk
 user_id fk(user.id)
 name
 weight f32
+
+
+# topic
+id pk
+user_id fk(user.id)
+name
+images
+create_at
+
+## reply 
+tid(fk topic.id)
+tid(fk topic.id)
