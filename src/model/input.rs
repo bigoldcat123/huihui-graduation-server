@@ -42,3 +42,9 @@ pub struct CreateTopicInput {
     pub images: Option<Vec<String>>,
     pub reply_to_id: Option<i32>,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TopicLikeInput {
+    pub topic_id: i32,
+    pub like: bool,
+}

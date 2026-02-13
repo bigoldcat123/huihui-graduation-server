@@ -1,5 +1,5 @@
 use crate::{
-    model::{input::CreateTopicInput, output::{Topic, TopicListItem}},
+    model::{input::{CreateTopicInput, TopicLikeInput}, output::TopicListItem},
     service::error::ServiceError,
     source,
 };
@@ -32,5 +32,14 @@ pub async fn create(user_id: i32, ipt: CreateTopicInput) -> Result<(), ServiceEr
         source::topic::create_reply(topic.id, reply_to_id).await?;
     }
 
+    Ok(())
+}
+
+pub async fn set_like(user_id: i32, ipt: TopicLikeInput) -> Result<(), ServiceError> {
+    if ipt.like {
+        source::topic_like::like_topic(user_id, ipt.topic_id).await?;
+    } else {
+        source::topic_like::unlike_topic(user_id, ipt.topic_id).await?;
+    }
     Ok(())
 }
