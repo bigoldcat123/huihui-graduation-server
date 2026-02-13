@@ -12,7 +12,7 @@ pub async fn list(page: Option<i64>) -> Result<Vec<TopicListItem>, ServiceError>
     Ok(raw_topics.into_iter().map(TopicListItem::from).collect())
 }
 
-pub async fn create(user_id: i32, ipt: CreateTopicInput) -> Result<Topic, ServiceError> {
+pub async fn create(user_id: i32, ipt: CreateTopicInput) -> Result<(), ServiceError> {
     let is_top = ipt.reply_to_id.is_none();
     let images_json = ipt
         .images
@@ -32,5 +32,5 @@ pub async fn create(user_id: i32, ipt: CreateTopicInput) -> Result<Topic, Servic
         source::topic::create_reply(topic.id, reply_to_id).await?;
     }
 
-    Ok(topic.into())
+    Ok(())
 }
