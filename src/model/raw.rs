@@ -18,3 +18,13 @@ pub struct Tag {
     pub name: String,
     pub image: String,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct Topic {
+    pub id: i32,
+    pub user_id: i32,
+    pub title: String,
+    pub content: String,
+    pub images: Option<String>,
+    pub create_at: DateTime<Local>,
+}

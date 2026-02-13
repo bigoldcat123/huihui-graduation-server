@@ -4,6 +4,7 @@ pub mod auth;
 pub mod food;
 pub mod static_files;
 pub mod upload;
+pub mod topic;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -20,4 +21,8 @@ pub fn static_handlers() -> Vec<HandlerModifier> {
 
 pub fn upload_handlers() -> Vec<HandlerModifier> {
     handlers!(upload::upload)
+}
+
+pub fn topic_handlers() -> Vec<HandlerModifier> {
+    handlers!(topic::list_topics)
 }

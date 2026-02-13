@@ -49,6 +49,7 @@ CREATE TABLE "topic" (
     user_id int NOT NULL REFERENCES "_user"(id),
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    is_top Boolean NOT NULL DEFAULT TRUE,
     images TEXT NULL,
     create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
