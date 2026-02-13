@@ -43,6 +43,7 @@ pub struct TopicListItem {
     pub user_info: TopicUserInfo,
     pub comment_count: i64,
     pub like_count: i64,
+    pub liked: bool,
 }
 
 impl From<raw::User> for CurrentUser {
@@ -88,6 +89,7 @@ impl From<raw::TopicWithStats> for TopicListItem {
             },
             comment_count: topic.comment_count,
             like_count: topic.like_count,
+            liked: topic.liked,
         }
     }
 }

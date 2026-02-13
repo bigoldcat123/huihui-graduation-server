@@ -1,6 +1,10 @@
 use crate::{db, model::raw::{Topic, TopicWithStats}};
 
-pub async fn list_topics_by_page(page: i64, page_size: i64) -> Result<Vec<TopicWithStats>, sqlx::Error> {
+pub async fn list_topics_by_page(
+    page: i64,
+    page_size: i64,
+    current_user_id: i32,
+) -> Result<Vec<TopicWithStats>, sqlx::Error> {
     let page = if page < 1 { 1 } else { page };
     let offset = (page - 1) * page_size;
     let topics: Vec<TopicWithStats> = sqlx::query_as(
@@ -15,7 +19,11 @@ pub async fn list_topics_by_page(page: i64, page_size: i64) -> Result<Vec<TopicW
             u.username AS user_name,
             u.email AS user_email,
             COALESCE(c.comment_count, 0)::BIGINT AS comment_count,
-            COALESCE(l.like_count, 0)::BIGINT AS like_count
+            COALESCE(l.like_count, 0)::BIGINT AS like_count,
+            EXISTS(
+                SELECT 1 FROM topic_like tl2
+                WHERE tl2.topic_id = t.id AND tl2.user_id = $3
+            ) AS liked
         FROM topic t
         JOIN _user u ON u.id = t.user_id
         LEFT JOIN (
@@ -35,6 +43,7 @@ pub async fn list_topics_by_page(page: i64, page_size: i64) -> Result<Vec<TopicW
     )
     .bind(page_size)
     .bind(offset)
+    .bind(current_user_id)
     .fetch_all(db())
     .await?;
     Ok(topics)

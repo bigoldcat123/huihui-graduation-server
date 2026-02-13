@@ -6,9 +6,9 @@ use crate::{
 
 const PAGE_SIZE: i64 = 10;
 
-pub async fn list(page: Option<i64>) -> Result<Vec<TopicListItem>, ServiceError> {
+pub async fn list(page: Option<i64>, user_id: i32) -> Result<Vec<TopicListItem>, ServiceError> {
     let page = page.unwrap_or(1);
-    let raw_topics = source::topic::list_topics_by_page(page, PAGE_SIZE).await?;
+    let raw_topics = source::topic::list_topics_by_page(page, PAGE_SIZE, user_id).await?;
     Ok(raw_topics.into_iter().map(TopicListItem::from).collect())
 }
 

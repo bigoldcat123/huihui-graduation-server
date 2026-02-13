@@ -41,4 +41,5 @@ pub struct TopicWithStats {
     pub user_email: String,
     pub comment_count: i64,
     pub like_count: i64,
+    pub liked: bool,
 }

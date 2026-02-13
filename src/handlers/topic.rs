@@ -3,8 +3,8 @@ use faithea::{data::{Json, inbound::FromRequest}, get, post};
 use crate::{model::{ApiResponse, input::{CreateTopicInput, TopicLikeInput}}, service::{self, auth::CurrentUserId}};
 
 #[get("/")]
-async fn list_topics(#[search_param] page: Option<i64>) {
-    let res: ApiResponse<_> = service::topic::list(page).await.into();
+async fn list_topics(#[search_param] page: Option<i64>, user_id: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::topic::list(page, user_id.into_inner().0).await.into();
     res.json()
 }
 
