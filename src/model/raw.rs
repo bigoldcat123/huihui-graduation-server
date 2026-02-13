@@ -28,3 +28,17 @@ pub struct Topic {
     pub images: Option<String>,
     pub create_at: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct TopicWithStats {
+    pub id: i32,
+    pub user_id: i32,
+    pub title: String,
+    pub content: String,
+    pub images: Option<String>,
+    pub create_at: DateTime<Local>,
+    pub user_name: String,
+    pub user_email: String,
+    pub comment_count: i64,
+    pub like_count: i64,
+}

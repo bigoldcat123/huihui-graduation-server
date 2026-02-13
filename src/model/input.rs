@@ -34,3 +34,11 @@ pub struct RecommendationReactionInput {
     pub source: String,
     pub occurred_at: i64,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreateTopicInput {
+    pub title: String,
+    pub content: String,
+    pub images: Option<Vec<String>>,
+    pub reply_to_id: Option<i32>,
+}

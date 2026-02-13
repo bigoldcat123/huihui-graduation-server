@@ -59,3 +59,9 @@ CREATE TABLE "reply" (
     comment_to_id int NOT NULL REFERENCES "topic"(id),
     PRIMARY KEY (comment_id, comment_to_id)
 );
+
+CREATE TABLE "topic_like" (
+    user_id int NOT NULL REFERENCES "_user"(id) ON DELETE CASCADE,
+    topic_id int NOT NULL REFERENCES "topic"(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, topic_id)
+);
