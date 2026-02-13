@@ -18,6 +18,7 @@ pub async fn list_topics_by_page(
             t.create_at,
             u.username AS user_name,
             u.email AS user_email,
+            u.profile AS user_profile,
             COALESCE(c.comment_count, 0)::BIGINT AS comment_count,
             COALESCE(l.like_count, 0)::BIGINT AS like_count,
             EXISTS(

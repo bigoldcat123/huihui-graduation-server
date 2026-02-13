@@ -8,6 +8,7 @@ pub struct CurrentUser {
     pub id: i32,
     pub email: String,
     pub name: String,
+    pub profile: Option<String>,
 }
 
 #[derive(Serialize,Deserialize)]
@@ -30,6 +31,7 @@ pub struct TopicUserInfo {
     pub id: i32,
     pub name: String,
     pub email: String,
+    pub profile: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -52,6 +54,7 @@ impl From<raw::User> for CurrentUser {
             id: user.id,
             email: user.email,
             name: user.username,
+            profile: user.profile,
         }
     }
 }
@@ -86,6 +89,7 @@ impl From<raw::TopicWithStats> for TopicListItem {
                 id: topic.user_id,
                 name: topic.user_name,
                 email: topic.user_email,
+                profile: topic.user_profile,
             },
             comment_count: topic.comment_count,
             like_count: topic.like_count,
