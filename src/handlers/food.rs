@@ -1,6 +1,6 @@
 use faithea::{data::{Json, inbound::FromRequest}, get, post};
 
-use crate::{model::{ApiResponse, input::{RecommendationReactionInput, SuggestionInput}}, service::{self, auth::CurrentUserId}};
+use crate::{model::{ApiResponse, input::{RecommendationReactionInput, SuggestionInput}}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
 
 #[get("/recommendation")]
 async fn recommendation(token: FromRequest<CurrentUserId>) {
@@ -21,5 +21,15 @@ async fn recommendation_reaction(
 #[post("/consecutiveSuggest")]
 async fn consecutive_suggest(food_ids: Json<SuggestionInput>, token: FromRequest<CurrentUserId>) {
     let res: ApiResponse<_> = service::food::consecutive_suggest(food_ids.0, token.0).await.into();
+    res.json()
+}
+
+#[get("/list")]
+async fn list_foods(
+    #[search_param] page: Option<i64>,
+    #[search_param] page_size: Option<i64>,
+    _root: FromRequest<CurrentRootUserId>,
+) {
+    let res: ApiResponse<_> = service::food::list_foods_by_page(page, page_size).await.into();
     res.json()
 }

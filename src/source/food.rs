@@ -57,6 +57,24 @@ pub async fn list_foods() -> Result<Vec<FoodRow>, sqlx::Error> {
     Ok(foods)
 }
 
+pub async fn list_foods_by_page(page: i64, page_size: i64) -> Result<Vec<FoodRow>, sqlx::Error> {
+    let page = if page < 1 { 1 } else { page };
+    let offset = (page - 1) * page_size;
+    let foods: Vec<FoodRow> = sqlx::query_as(
+        r#"
+        SELECT id, restaurant_id, name, description, image
+        FROM food
+        ORDER BY id
+        LIMIT $1 OFFSET $2
+        "#,
+    )
+    .bind(page_size)
+    .bind(offset)
+    .fetch_all(db())
+    .await?;
+    Ok(foods)
+}
+
 pub async fn list_food_not_in_ids(ids: &Vec<i32>) -> Result<Vec<FoodRow>, sqlx::Error> {
     if ids.is_empty() {
         return list_foods().await;

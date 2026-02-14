@@ -48,6 +48,23 @@ pub struct TopicListItem {
     pub liked: bool,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct FoodTag {
+    pub id: i32,
+    pub name: String,
+    pub image: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct FoodWithTags {
+    pub id: i32,
+    pub restaurant_id: i32,
+    pub name: String,
+    pub description: String,
+    pub image: String,
+    pub tags: Vec<FoodTag>,
+}
+
 impl From<raw::User> for CurrentUser {
     fn from(user: raw::User) -> Self {
         CurrentUser {

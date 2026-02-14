@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{model::{input::{Reaction, RecommendationReactionInput, SuggestionInput}, raw::Tag}, service::error::ServiceError, source::{self, food, operation}};
+use crate::{model::{input::{Reaction, RecommendationReactionInput, SuggestionInput}, output::{FoodTag, FoodWithTags}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
 use rand::seq::SliceRandom;
 use source::food::FoodRow;
 
@@ -40,6 +40,32 @@ pub async fn recommendation(_user_id: i32) -> Result<Vec<FoodRow>, ServiceError>
     }
     filtered_foods.shuffle(&mut rand::rng());
     Ok(filtered_foods)
+}
+
+pub async fn list_foods_by_page(page: Option<i64>, page_size: Option<i64>) -> Result<Vec<FoodWithTags>, ServiceError> {
+    let page = page.unwrap_or(1);
+    let page_size = page_size.unwrap_or(10).max(1).min(100);
+    let foods = source::food::list_foods_by_page(page, page_size).await?;
+    let mut result = Vec::with_capacity(foods.len());
+    for food in foods {
+        let tags = source::tag::list_food_tags(food.id).await?;
+        result.push(FoodWithTags {
+            id: food.id,
+            restaurant_id: food.restaurant_id,
+            name: food.name,
+            description: food.description,
+            image: food.image,
+            tags: tags
+                .into_iter()
+                .map(|t| FoodTag {
+                    id: t.id,
+                    name: t.name,
+                    image: t.image,
+                })
+                .collect(),
+        });
+    }
+    Ok(result)
 }
 
 pub async fn save_reaction(user_id: i32, ipt: RecommendationReactionInput) -> Result<i32, ServiceError> {
