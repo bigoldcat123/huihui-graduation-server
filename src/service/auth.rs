@@ -19,6 +19,7 @@ struct Claims {
 }
 
 pub struct CurrentUserId(pub i32);
+pub struct CurrentRootUserId(pub i32);
 
 impl<'a> TryFromRequest<'a> for CurrentUserId {
     fn try_from_request(
@@ -38,6 +39,20 @@ impl<'a> TryFromRequest<'a> for CurrentUserId {
         let claims =
             verify_token(token).map_err(|_| faithea::handler::types::HttpHandlerError::BeforeHandler(BeforeHandlerError::ParamNotExist))?;
         Ok(CurrentUserId(claims.sub))
+    }
+}
+
+impl<'a> TryFromRequest<'a> for CurrentRootUserId {
+    fn try_from_request(
+        req: &'a mut faithea::request::HttpRequest,
+    ) -> Result<Self, faithea::handler::types::HttpHandlerError> {
+        let user_id = CurrentUserId::try_from_request(req)?.0;
+        if user_id != 1 {
+            return Err(faithea::handler::types::HttpHandlerError::BeforeHandler(
+                BeforeHandlerError::ParamNotExist,
+            ));
+        }
+        Ok(CurrentRootUserId(user_id))
     }
 }
 
