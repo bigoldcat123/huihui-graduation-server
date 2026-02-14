@@ -4,8 +4,7 @@ use crate::{model::{ApiResponse, input::{RecommendationReactionInput, Suggestion
 
 #[get("/recommendation")]
 async fn recommendation(token: FromRequest<CurrentUserId>) {
-    println!("{:?}",token.into_inner().0);
-    let res: ApiResponse<_> = service::food::recommendation(1).await.into();
+    let res: ApiResponse<_> = service::food::recommendation(token.0).await.into();
     res.json()
 }
 
@@ -21,6 +20,6 @@ async fn recommendation_reaction(
 
 #[post("/consecutiveSuggest")]
 async fn consecutive_suggest(food_ids: Json<SuggestionInput>, token: FromRequest<CurrentUserId>) {
-    let res: ApiResponse<_> = service::food::consecutive_suggest(food_ids.0, token.into_inner().0).await.into();
+    let res: ApiResponse<_> = service::food::consecutive_suggest(food_ids.0, token.0).await.into();
     res.json()
 }

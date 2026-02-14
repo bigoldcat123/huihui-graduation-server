@@ -12,3 +12,4 @@ chrono = "0.4"
 jsonwebtoken = "9.3.1"
 sqlx = { version = "0.8.6", features = ["chrono", "postgres", "runtime-tokio", "tls-rustls"] }
 tokio = { version = "1.49.0", features = ["macros"] }
+rand = "0.10.0"

@@ -94,3 +94,22 @@ pub async fn list_food_in_ids(ids: &Vec<i32>) -> Result<Vec<FoodRow>, sqlx::Erro
     .await?;
     Ok(foods)
 }
+
+pub async fn list_user_liked_foods(_user_id: i32) -> Result<Vec<FoodRow>, sqlx::Error> {
+    let foods: Vec<FoodRow> = sqlx::query_as(
+        r#"
+        SELECT
+            f.id, f.restaurant_id, f.name, f.description, f.image
+        FROM operation o
+        JOIN food f ON f.id = o.food_id
+        WHERE o.user_id = $1
+          AND o.name = 'like'
+          AND o.weight > 0
+        ORDER BY o.id DESC
+        "#,
+    )
+    .bind(_user_id)
+    .fetch_all(db())
+    .await?;
+    Ok(foods)
+}
