@@ -1,12 +1,13 @@
 use faithea::{get, handlers, server::HttpServer};
 use huihui_server::{handlers::{auth_handlers, food_handlers, static_handlers, topic_handlers, upload_handlers}, init_db};
+use tokio::task::spawn_blocking;
 
 #[get("/")]
 async fn hello() {
     "hello"
 }
 
-#[tokio::main(flavor = "current_thread")]
+#[tokio::main(flavor="current_thread")]
 async fn main() {
     env_logger::init();
     init_db().await;

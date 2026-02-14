@@ -13,6 +13,13 @@ pub struct RegisterInput {
     pub username: String,
     pub password: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UpdateUserInfoInput {
+    pub email: Option<String>,
+    pub username: Option<String>,
+    pub profile: Option<String>,
+}
 #[derive(Serialize,Deserialize,Debug)]
 pub struct SuggestionInput{
     pub food_ids: Vec<i32>,

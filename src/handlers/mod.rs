@@ -8,7 +8,7 @@ pub mod topic;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
-    handlers!(auth::login, auth::register, auth::me)
+    handlers!(auth::login, auth::register, auth::me, auth::update_user_info)
 }
 
 pub fn food_handlers() -> Vec<HandlerModifier> {

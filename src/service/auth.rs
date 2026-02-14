@@ -1,6 +1,6 @@
 use crate::{
     model::{
-        input::{RegisterInput, UsernamePasswordAuthentication},
+        input::{RegisterInput, UpdateUserInfoInput, UsernamePasswordAuthentication},
         output::{AuthResult, CurrentUser},
     },
     service::error::ServiceError,
@@ -83,5 +83,16 @@ pub async fn register(input: RegisterInput) -> Result<AuthResult, ServiceError> 
 
 pub async fn me(id: i32) -> Result<CurrentUser, ServiceError> {
     let user = source::user::get_user_by_id(id).await?;
+    Ok(user.into())
+}
+
+pub async fn update_user_info(id: i32, ipt: UpdateUserInfoInput) -> Result<CurrentUser, ServiceError> {
+    let user = source::user::update_user_info(
+        id,
+        ipt.email.as_deref(),
+        ipt.username.as_deref(),
+        ipt.profile.as_deref(),
+    )
+    .await?;
     Ok(user.into())
 }
