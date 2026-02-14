@@ -19,3 +19,9 @@ async fn like_topic(ipt: Json<TopicLikeInput>, user_id: FromRequest<CurrentUserI
     let res: ApiResponse<_> = service::topic::set_like(user_id.into_inner().0, ipt.0).await.into();
     res.json()
 }
+
+#[get("/comment/{topic_id}")]
+async fn list_comment(topic_id: i32, user_id: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::topic::list_comment(topic_id, user_id.into_inner().0).await.into();
+    res.json()
+}
