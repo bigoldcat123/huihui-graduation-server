@@ -10,6 +10,12 @@ async fn login(auth:Json<UsernamePasswordAuthentication>) {
     res.json()
 }
 
+#[post("/login/root")]
+async fn root_login(auth: Json<UsernamePasswordAuthentication>) {
+    let res: ApiResponse<_> = service::auth::root_login(auth.0).await.into();
+    res.json()
+}
+
 #[post("/register")]
 async fn register(input: Json<RegisterInput>) {
     let res: ApiResponse<_> = service::auth::register(input.0).await.into();

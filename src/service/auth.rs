@@ -3,6 +3,7 @@ use crate::{
         input::{RegisterInput, UpdateUserInfoInput, UsernamePasswordAuthentication},
         output::{AuthResult, CurrentUser},
     },
+    ROOT_USER_ID,
     service::error::ServiceError,
     source,
 };
@@ -47,7 +48,7 @@ impl<'a> TryFromRequest<'a> for CurrentRootUserId {
         req: &'a mut faithea::request::HttpRequest,
     ) -> Result<Self, faithea::handler::types::HttpHandlerError> {
         let user_id = CurrentUserId::try_from_request(req)?.0;
-        if user_id != 1 {
+        if user_id != ROOT_USER_ID {
             return Err(faithea::handler::types::HttpHandlerError::BeforeHandler(
                 BeforeHandlerError::ParamNotExist,
             ));
@@ -85,6 +86,17 @@ pub async fn login(auth: UsernamePasswordAuthentication) -> Result<AuthResult, S
 
     let current_user: CurrentUser = user.into();
     let token = sign_token(current_user.id)?;
+    Ok(AuthResult { token })
+}
+
+pub async fn root_login(auth: UsernamePasswordAuthentication) -> Result<AuthResult, ServiceError> {
+    let user = source::user::get_user_by_name(&auth.username).await?;
+    if user.id != ROOT_USER_ID {
+        return Err(ServiceError::PermissionDenied(format!(
+            "root login requires user_id = {ROOT_USER_ID}"
+        )));
+    }
+    let token = sign_token(user.id)?;
     Ok(AuthResult { token })
 }
 
