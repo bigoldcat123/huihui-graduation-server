@@ -55,3 +55,12 @@ pub struct TopicLikeInput {
     pub topic_id: i32,
     pub like: bool,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreateFoodInput {
+    pub restaurant_id: i32,
+    pub name: String,
+    pub description: String,
+    pub image: String,
+    pub tag_ids: Option<Vec<i32>>,
+}

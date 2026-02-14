@@ -21,6 +21,15 @@ pub struct Tag {
 }
 
 #[derive(Debug, Clone, FromRow)]
+pub struct Restaurant {
+    pub id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub location: String,
+    pub image: String,
+}
+
+#[derive(Debug, Clone, FromRow)]
 pub struct Topic {
     pub id: i32,
     pub user_id: i32,

@@ -6,6 +6,7 @@ pub mod static_files;
 pub mod upload;
 pub mod topic;
 pub mod tag;
+pub mod restaurant;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -13,7 +14,7 @@ pub fn auth_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn food_handlers() -> Vec<HandlerModifier> {
-    handlers!(food::recommendation, food::recommendation_reaction, food::consecutive_suggest, food::list_foods)
+    handlers!(food::recommendation, food::recommendation_reaction, food::consecutive_suggest, food::list_foods, food::create_food)
 }
 
 pub fn static_handlers() -> Vec<HandlerModifier> {
@@ -30,4 +31,8 @@ pub fn topic_handlers() -> Vec<HandlerModifier> {
 
 pub fn tag_handlers() -> Vec<HandlerModifier> {
     handlers!(tag::list_tags)
+}
+
+pub fn restaurant_handlers() -> Vec<HandlerModifier> {
+    handlers!(restaurant::list_restaurants)
 }

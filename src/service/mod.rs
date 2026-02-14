@@ -3,3 +3,4 @@ pub mod error;
 pub mod food;
 pub mod topic;
 pub mod tag;
+pub mod restaurant;

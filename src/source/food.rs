@@ -131,3 +131,40 @@ pub async fn list_user_liked_foods(_user_id: i32) -> Result<Vec<FoodRow>, sqlx::
     .await?;
     Ok(foods)
 }
+
+pub async fn create_food(
+    restaurant_id: i32,
+    name: &str,
+    description: &str,
+    image: &str,
+) -> Result<FoodRow, sqlx::Error> {
+    let food: FoodRow = sqlx::query_as(
+        r#"
+        INSERT INTO food (restaurant_id, name, description, image)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, restaurant_id, name, description, image
+        "#,
+    )
+    .bind(restaurant_id)
+    .bind(name)
+    .bind(description)
+    .bind(image)
+    .fetch_one(db())
+    .await?;
+    Ok(food)
+}
+
+pub async fn add_food_tag(food_id: i32, tag_id: i32) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        r#"
+        INSERT INTO food_tag (food_id, tag_id)
+        VALUES ($1, $2)
+        ON CONFLICT (food_id, tag_id) DO NOTHING
+        "#,
+    )
+    .bind(food_id)
+    .bind(tag_id)
+    .execute(db())
+    .await?;
+    Ok(())
+}

@@ -65,6 +65,15 @@ pub struct FoodWithTags {
     pub tags: Vec<FoodTag>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Restaurant {
+    pub id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub location: String,
+    pub image: String,
+}
+
 impl From<raw::User> for CurrentUser {
     fn from(user: raw::User) -> Self {
         CurrentUser {
@@ -111,6 +120,18 @@ impl From<raw::TopicWithStats> for TopicListItem {
             comment_count: topic.comment_count,
             like_count: topic.like_count,
             liked: topic.liked,
+        }
+    }
+}
+
+impl From<raw::Restaurant> for Restaurant {
+    fn from(value: raw::Restaurant) -> Self {
+        Restaurant {
+            id: value.id,
+            name: value.name,
+            description: value.description,
+            location: value.location,
+            image: value.image,
         }
     }
 }

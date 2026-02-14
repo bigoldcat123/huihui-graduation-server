@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{model::{input::{Reaction, RecommendationReactionInput, SuggestionInput}, output::{FoodTag, FoodWithTags}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
+use crate::{model::{input::{CreateFoodInput, Reaction, RecommendationReactionInput, SuggestionInput}, output::{FoodTag, FoodWithTags}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
 use rand::seq::SliceRandom;
 use source::food::FoodRow;
 
@@ -66,6 +66,39 @@ pub async fn list_foods_by_page(page: Option<i64>, page_size: Option<i64>) -> Re
         });
     }
     Ok(result)
+}
+
+pub async fn create_food(ipt: CreateFoodInput) -> Result<FoodWithTags, ServiceError> {
+    let food = source::food::create_food(
+        ipt.restaurant_id,
+        &ipt.name,
+        &ipt.description,
+        &ipt.image,
+    )
+    .await?;
+
+    if let Some(tag_ids) = ipt.tag_ids {
+        for tag_id in tag_ids {
+            source::food::add_food_tag(food.id, tag_id).await?;
+        }
+    }
+
+    let tags = source::tag::list_food_tags(food.id).await?;
+    Ok(FoodWithTags {
+        id: food.id,
+        restaurant_id: food.restaurant_id,
+        name: food.name,
+        description: food.description,
+        image: food.image,
+        tags: tags
+            .into_iter()
+            .map(|t| FoodTag {
+                id: t.id,
+                name: t.name,
+                image: t.image,
+            })
+            .collect(),
+    })
 }
 
 pub async fn save_reaction(user_id: i32, ipt: RecommendationReactionInput) -> Result<i32, ServiceError> {
