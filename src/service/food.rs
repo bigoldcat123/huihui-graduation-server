@@ -19,12 +19,10 @@ pub async fn recommendation(_user_id: i32) -> Result<Vec<FoodRow>, ServiceError>
 
     //1. calculate user's food preference
     let user_profile = cal_user_profile(food_tag);
-    println!("{:?}",user_profile);
     //2. calculate all food's preference
     let all_foods = source::food::list_foods().await?;
     let all_food_tag = cal_food_tags(&all_foods).await?;
     let food_factor = cal_food_factor(&user_profile, &all_food_tag);
-    println!("{:?}",food_factor);
     //3. take all food above 0.5
     let mut filtered_foods = all_foods.iter().filter(|x| food_factor[&x.id] >= 0.5).cloned().collect::<Vec<_>>();
     let mut left_foods = all_foods.iter().filter(|x| food_factor[&x.id] < 0.5).cloned().collect::<Vec<_>>();
