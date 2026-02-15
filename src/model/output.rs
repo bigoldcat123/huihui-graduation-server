@@ -59,6 +59,7 @@ pub struct FoodTag {
 pub struct FoodWithTags {
     pub id: i32,
     pub restaurant_id: i32,
+    pub restaurant_name: String,
     pub name: String,
     pub description: String,
     pub image: String,

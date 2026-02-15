@@ -46,10 +46,12 @@ pub async fn list_foods_by_page(page: Option<i64>, page_size: Option<i64>) -> Re
     let foods = source::food::list_foods_by_page(page, page_size).await?;
     let mut result = Vec::with_capacity(foods.len());
     for food in foods {
+        let restaurant = source::restaurant::get_restaurant_by_id(food.restaurant_id).await?;
         let tags = source::tag::list_food_tags(food.id).await?;
         result.push(FoodWithTags {
             id: food.id,
             restaurant_id: food.restaurant_id,
+            restaurant_name: restaurant.name,
             name: food.name,
             description: food.description,
             image: food.image,
@@ -81,10 +83,12 @@ pub async fn create_food(ipt: CreateFoodInput) -> Result<FoodWithTags, ServiceEr
         }
     }
 
+    let restaurant = source::restaurant::get_restaurant_by_id(food.restaurant_id).await?;
     let tags = source::tag::list_food_tags(food.id).await?;
     Ok(FoodWithTags {
         id: food.id,
         restaurant_id: food.restaurant_id,
+        restaurant_name: restaurant.name,
         name: food.name,
         description: food.description,
         image: food.image,
@@ -114,10 +118,12 @@ pub async fn update_food(ipt: UpdateFoodInput) -> Result<FoodWithTags, ServiceEr
         source::food::add_food_tag(food.id, tag_id).await?;
     }
 
+    let restaurant = source::restaurant::get_restaurant_by_id(food.restaurant_id).await?;
     let tags = source::tag::list_food_tags(food.id).await?;
     Ok(FoodWithTags {
         id: food.id,
         restaurant_id: food.restaurant_id,
+        restaurant_name: restaurant.name,
         name: food.name,
         description: food.description,
         image: food.image,
