@@ -64,3 +64,9 @@ pub struct CreateFoodInput {
     pub image: String,
     pub tag_ids: Option<Vec<i32>>,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreateTagInput {
+    pub name: String,
+    pub image: String,
+}

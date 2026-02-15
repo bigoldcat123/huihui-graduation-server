@@ -30,7 +30,7 @@ pub fn topic_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn tag_handlers() -> Vec<HandlerModifier> {
-    handlers!(tag::list_tags)
+    handlers!(tag::list_tags, tag::create_tag)
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {

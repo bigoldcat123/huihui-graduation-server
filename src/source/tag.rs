@@ -24,3 +24,18 @@ pub async fn list_food_tags(food_id: i32) -> Result<Vec<Tag>, sqlx::Error> {
     .await?;
     Ok(tags)
 }
+
+pub async fn create_tag(name: &str, image: &str) -> Result<Tag, sqlx::Error> {
+    let tag: Tag = sqlx::query_as(
+        r#"
+        INSERT INTO tag (name, image)
+        VALUES ($1, $2)
+        RETURNING id, name, image
+        "#,
+    )
+    .bind(name)
+    .bind(image)
+    .fetch_one(db())
+    .await?;
+    Ok(tag)
+}
