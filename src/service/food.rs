@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{model::{input::{CreateFoodInput, Reaction, RecommendationReactionInput, SuggestionInput}, output::{FoodTag, FoodWithTags}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
+use crate::{model::{input::{CreateFoodInput, Reaction, RecommendationReactionInput, SuggestionInput, UpdateFoodInput}, output::{FoodTag, FoodWithTags}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
 use rand::seq::SliceRandom;
 use source::food::FoodRow;
 
@@ -81,6 +81,39 @@ pub async fn create_food(ipt: CreateFoodInput) -> Result<FoodWithTags, ServiceEr
         for tag_id in tag_ids {
             source::food::add_food_tag(food.id, tag_id).await?;
         }
+    }
+
+    let tags = source::tag::list_food_tags(food.id).await?;
+    Ok(FoodWithTags {
+        id: food.id,
+        restaurant_id: food.restaurant_id,
+        name: food.name,
+        description: food.description,
+        image: food.image,
+        tags: tags
+            .into_iter()
+            .map(|t| FoodTag {
+                id: t.id,
+                name: t.name,
+                image: t.image,
+            })
+            .collect(),
+    })
+}
+
+pub async fn update_food(ipt: UpdateFoodInput) -> Result<FoodWithTags, ServiceError> {
+    let food = source::food::update_food(
+        ipt.id,
+        ipt.restaurant_id,
+        &ipt.name,
+        &ipt.description,
+        &ipt.image,
+    )
+    .await?;
+
+    source::food::clear_food_tags(food.id).await?;
+    for tag_id in ipt.tag_ids {
+        source::food::add_food_tag(food.id, tag_id).await?;
     }
 
     let tags = source::tag::list_food_tags(food.id).await?;

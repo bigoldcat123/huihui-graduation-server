@@ -168,3 +168,45 @@ pub async fn add_food_tag(food_id: i32, tag_id: i32) -> Result<(), sqlx::Error> 
     .await?;
     Ok(())
 }
+
+pub async fn clear_food_tags(food_id: i32) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        r#"
+        DELETE FROM food_tag
+        WHERE food_id = $1
+        "#,
+    )
+    .bind(food_id)
+    .execute(db())
+    .await?;
+    Ok(())
+}
+
+pub async fn update_food(
+    id: i32,
+    restaurant_id: i32,
+    name: &str,
+    description: &str,
+    image: &str,
+) -> Result<FoodRow, sqlx::Error> {
+    let food: FoodRow = sqlx::query_as(
+        r#"
+        UPDATE food
+        SET
+            restaurant_id = $2,
+            name = $3,
+            description = $4,
+            image = $5
+        WHERE id = $1
+        RETURNING id, restaurant_id, name, description, image
+        "#,
+    )
+    .bind(id)
+    .bind(restaurant_id)
+    .bind(name)
+    .bind(description)
+    .bind(image)
+    .fetch_one(db())
+    .await?;
+    Ok(food)
+}

@@ -1,6 +1,6 @@
 use faithea::{data::{Json, inbound::FromRequest}, get, post};
 
-use crate::{model::{ApiResponse, input::{CreateFoodInput, RecommendationReactionInput, SuggestionInput}}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
+use crate::{model::{ApiResponse, input::{CreateFoodInput, RecommendationReactionInput, SuggestionInput, UpdateFoodInput}}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
 
 #[get("/recommendation")]
 async fn recommendation(token: FromRequest<CurrentUserId>) {
@@ -37,5 +37,11 @@ async fn list_foods(
 #[post("/")]
 async fn create_food(ipt: Json<CreateFoodInput>, _root: FromRequest<CurrentRootUserId>) {
     let res: ApiResponse<_> = service::food::create_food(ipt.0).await.into();
+    res.json()
+}
+
+#[post("/update")]
+async fn update_food(ipt: Json<UpdateFoodInput>, _root: FromRequest<CurrentRootUserId>) {
+    let res: ApiResponse<_> = service::food::update_food(ipt.0).await.into();
     res.json()
 }

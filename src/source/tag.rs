@@ -39,3 +39,27 @@ pub async fn create_tag(name: &str, image: &str) -> Result<Tag, sqlx::Error> {
     .await?;
     Ok(tag)
 }
+
+pub async fn insert_tag_list(tags: Vec<Tag>) -> Result<Vec<Tag>, sqlx::Error> {
+    let mut tx = db().begin().await?;
+    let mut inserted = Vec::with_capacity(tags.len());
+
+    for tag in tags {
+        let created: Tag = sqlx::query_as(
+            r#"
+            INSERT INTO tag (name, image)
+            VALUES ($1, $2)
+            ON CONFLICT (name) DO UPDATE SET image = EXCLUDED.image
+            RETURNING id, name, image
+            "#,
+        )
+        .bind(tag.name)
+        .bind(tag.image)
+        .fetch_one(&mut *tx)
+        .await?;
+        inserted.push(created);
+    }
+
+    tx.commit().await?;
+    Ok(inserted)
+}

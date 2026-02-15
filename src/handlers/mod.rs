@@ -14,7 +14,7 @@ pub fn auth_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn food_handlers() -> Vec<HandlerModifier> {
-    handlers!(food::recommendation, food::recommendation_reaction, food::consecutive_suggest, food::list_foods, food::create_food)
+    handlers!(food::recommendation, food::recommendation_reaction, food::consecutive_suggest, food::list_foods, food::create_food, food::update_food)
 }
 
 pub fn static_handlers() -> Vec<HandlerModifier> {

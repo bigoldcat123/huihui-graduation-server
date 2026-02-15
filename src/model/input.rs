@@ -70,3 +70,13 @@ pub struct CreateTagInput {
     pub name: String,
     pub image: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UpdateFoodInput {
+    pub id: i32,
+    pub restaurant_id: i32,
+    pub name: String,
+    pub description: String,
+    pub image: String,
+    pub tag_ids: Vec<i32>,
+}
