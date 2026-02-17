@@ -1,4 +1,5 @@
 use crate::{db, model::raw::Tag};
+use sqlx::FromRow;
 
 
 
@@ -62,4 +63,32 @@ pub async fn insert_tag_list(tags: Vec<Tag>) -> Result<Vec<Tag>, sqlx::Error> {
 
     tx.commit().await?;
     Ok(inserted)
+}
+
+#[derive(Debug, Clone, FromRow)]
+pub struct NameValueRow {
+    pub name: String,
+    pub value: f64,
+}
+
+pub async fn list_user_liked_tag_values(user_id: i32) -> Result<Vec<NameValueRow>, sqlx::Error> {
+    let rows: Vec<NameValueRow> = sqlx::query_as(
+        r#"
+        SELECT
+            t.name AS name,
+            COALESCE(SUM(o.weight), 0)::DOUBLE PRECISION AS value
+        FROM operation o
+        JOIN food_tag ft ON ft.food_id = o.food_id
+        JOIN tag t ON t.id = ft.tag_id
+        WHERE o.user_id = $1
+          AND o.name = 'like'
+          AND o.weight > 0
+        GROUP BY t.id, t.name
+        ORDER BY value DESC, t.name ASC
+        "#,
+    )
+    .bind(user_id)
+    .fetch_all(db())
+    .await?;
+    Ok(rows)
 }

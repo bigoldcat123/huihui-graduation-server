@@ -75,6 +75,12 @@ pub struct Restaurant {
     pub image: String,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct NameValue {
+    pub name: String,
+    pub value: f64,
+}
+
 impl From<raw::User> for CurrentUser {
     fn from(user: raw::User) -> Self {
         CurrentUser {
