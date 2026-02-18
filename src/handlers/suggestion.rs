@@ -1,6 +1,6 @@
 use faithea::{data::{Json, inbound::FromRequest}, get, post};
 
-use crate::{model::{ApiResponse, input::CreateSuggestionInput}, service::{self, auth::CurrentUserId}};
+use crate::{model::{ApiResponse, input::CreateSuggestionInput}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
 
 #[post("/")]
 async fn create_suggestion(ipt: Json<CreateSuggestionInput>, user_id: FromRequest<CurrentUserId>) {
@@ -11,5 +11,15 @@ async fn create_suggestion(ipt: Json<CreateSuggestionInput>, user_id: FromReques
 #[get("/my")]
 async fn list_my_suggestion(user_id: FromRequest<CurrentUserId>) {
     let res: ApiResponse<_> = service::suggestion::list_my(user_id.into_inner().0).await.into();
+    res.json()
+}
+
+#[get("/list")]
+async fn list_suggestion_by_page(
+    #[search_param] page: Option<i64>,
+    #[search_param] page_size: Option<i64>,
+    _root: FromRequest<CurrentRootUserId>,
+) {
+    let res: ApiResponse<_> = service::suggestion::list_by_page(page, page_size).await.into();
     res.json()
 }

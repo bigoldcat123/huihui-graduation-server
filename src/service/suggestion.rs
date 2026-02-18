@@ -20,6 +20,17 @@ pub async fn create(user_id: i32, ipt: CreateSuggestionInput) -> Result<i32, Ser
 
 pub async fn list_my(user_id: i32) -> Result<Vec<Suggestion>, ServiceError> {
     let suggestions = source::suggestion::list_my_suggestions(user_id).await?;
+    map_suggestions(suggestions).await
+}
+
+pub async fn list_by_page(page: Option<i64>, page_size: Option<i64>) -> Result<Vec<Suggestion>, ServiceError> {
+    let page = page.unwrap_or(1);
+    let page_size = page_size.unwrap_or(10);
+    let suggestions = source::suggestion::list_suggestions_by_page(page, page_size).await?;
+    map_suggestions(suggestions).await
+}
+
+async fn map_suggestions(suggestions: Vec<crate::model::raw::Suggestion>) -> Result<Vec<Suggestion>, ServiceError> {
     let mut result = Vec::with_capacity(suggestions.len());
 
     for item in suggestions {
