@@ -65,3 +65,34 @@ CREATE TABLE "topic_like" (
     topic_id int NOT NULL REFERENCES "topic"(id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, topic_id)
 );
+
+
+CREATE TYPE suggestion_type AS ENUM (
+    'ADD_FOOD',
+    'UPDATE_FOOD',
+    'OTHER'
+);
+
+CREATE TYPE suggestion_status AS ENUM (
+    'PENDING',
+    'APPROVED',
+    'REJECTED',
+    'PREPARING',
+    'PROCESSING',
+    'FINISHED'
+);
+
+CREATE TABLE "suggestion" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    content TEXT NOT NULL,
+    images TEXT,
+    type suggestion_type NOT NULL,
+    status suggestion_status NOT NULL DEFAULT 'PENDING',
+    food_id int REFERENCES "food"(id) ON DELETE SET NULL,
+    restaurant_id int REFERENCES "restaurant"(id) ON DELETE SET NULL,
+    reviewer_id int REFERENCES "_user"(id) ON DELETE SET NULL,
+    review_comment TEXT,
+    user_id int NOT NULL REFERENCES "_user"(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    reviewed_at TIMESTAMP
+);
