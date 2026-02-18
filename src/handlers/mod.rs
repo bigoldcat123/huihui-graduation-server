@@ -7,6 +7,7 @@ pub mod upload;
 pub mod topic;
 pub mod tag;
 pub mod restaurant;
+pub mod suggestion;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -35,4 +36,8 @@ pub fn tag_handlers() -> Vec<HandlerModifier> {
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {
     handlers!(restaurant::list_restaurants)
+}
+
+pub fn suggestion_handlers() -> Vec<HandlerModifier> {
+    handlers!(suggestion::create_suggestion)
 }

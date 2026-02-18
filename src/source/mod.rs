@@ -5,3 +5,4 @@ pub mod operation;
 pub mod topic;
 pub mod topic_like;
 pub mod restaurant;
+pub mod suggestion;

@@ -4,3 +4,4 @@ pub mod food;
 pub mod topic;
 pub mod tag;
 pub mod restaurant;
+pub mod suggestion;

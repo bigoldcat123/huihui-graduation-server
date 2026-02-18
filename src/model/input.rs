@@ -80,3 +80,31 @@ pub struct UpdateFoodInput {
     pub image: String,
     pub tag_ids: Vec<i32>,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SuggestionType {
+    AddFood,
+    UpdateFood,
+    Other,
+}
+
+impl SuggestionType {
+    pub fn as_db_str(self) -> &'static str {
+        match self {
+            SuggestionType::AddFood => "ADD_FOOD",
+            SuggestionType::UpdateFood => "UPDATE_FOOD",
+            SuggestionType::Other => "OTHER",
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreateSuggestionInput {
+    pub content: String,
+    pub images: Vec<String>,
+    #[serde(rename = "type")]
+    pub r#type: SuggestionType,
+    pub food_id: Option<i32>,
+    pub restaurant_id: Option<i32>,
+}
