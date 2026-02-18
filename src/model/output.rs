@@ -67,12 +67,25 @@ pub struct FoodWithTags {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct FoodSimple {
+    pub id: i32,
+    pub name: String,
+    pub image: String,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Restaurant {
     pub id: i32,
     pub name: String,
     pub description: Option<String>,
     pub location: String,
     pub image: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RestaurantSimple {
+    pub id: i32,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -156,6 +169,15 @@ impl From<raw::Restaurant> for Restaurant {
             description: value.description,
             location: value.location,
             image: value.image,
+        }
+    }
+}
+
+impl From<raw::Restaurant> for RestaurantSimple {
+    fn from(value: raw::Restaurant) -> Self {
+        RestaurantSimple {
+            id: value.id,
+            name: value.name,
         }
     }
 }

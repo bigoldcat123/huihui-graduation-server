@@ -35,7 +35,11 @@ pub fn tag_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {
-    handlers!(restaurant::list_restaurants)
+    handlers!(
+        restaurant::list_restaurants,
+        restaurant::list_restaurants_simple,
+        restaurant::list_foods_by_restaurant_id
+    )
 }
 
 pub fn suggestion_handlers() -> Vec<HandlerModifier> {
