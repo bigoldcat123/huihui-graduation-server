@@ -54,3 +54,19 @@ pub struct TopicWithStats {
     pub like_count: i64,
     pub liked: bool,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct Suggestion {
+    pub id: i32,
+    pub content: String,
+    pub images: Option<String>,
+    pub r#type: String,
+    pub status: String,
+    pub food_id: Option<i32>,
+    pub restaurant_id: Option<i32>,
+    pub reviewer_id: Option<i32>,
+    pub review_comment: Option<String>,
+    pub user_id: i32,
+    pub created_at: DateTime<Local>,
+    pub reviewed_at: Option<DateTime<Local>>,
+}

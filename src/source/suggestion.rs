@@ -1,4 +1,5 @@
 use crate::db;
+use crate::model::raw::Suggestion;
 
 pub async fn create_suggestion(
     user_id: i32,
@@ -24,4 +25,31 @@ pub async fn create_suggestion(
     .fetch_one(db())
     .await?;
     Ok(new_id)
+}
+
+pub async fn list_my_suggestions(user_id: i32) -> Result<Vec<Suggestion>, sqlx::Error> {
+    let suggestions: Vec<Suggestion> = sqlx::query_as(
+        r#"
+        SELECT
+            id,
+            content,
+            images,
+            type::text AS type,
+            status::text AS status,
+            food_id,
+            restaurant_id,
+            reviewer_id,
+            review_comment,
+            user_id,
+            created_at,
+            reviewed_at
+        FROM suggestion
+        WHERE user_id = $1
+        ORDER BY created_at DESC, id DESC
+        "#,
+    )
+    .bind(user_id)
+    .fetch_all(db())
+    .await?;
+    Ok(suggestions)
 }

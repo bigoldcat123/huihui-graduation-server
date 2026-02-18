@@ -132,6 +132,20 @@ pub async fn list_user_liked_foods(_user_id: i32) -> Result<Vec<FoodRow>, sqlx::
     Ok(foods)
 }
 
+pub async fn get_food_by_id(id: i32) -> Result<FoodRow, sqlx::Error> {
+    let food: FoodRow = sqlx::query_as(
+        r#"
+        SELECT id, restaurant_id, name, description, image
+        FROM food
+        WHERE id = $1
+        "#,
+    )
+    .bind(id)
+    .fetch_one(db())
+    .await?;
+    Ok(food)
+}
+
 pub async fn create_food(
     restaurant_id: i32,
     name: &str,

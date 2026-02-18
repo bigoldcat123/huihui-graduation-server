@@ -39,5 +39,5 @@ pub fn restaurant_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn suggestion_handlers() -> Vec<HandlerModifier> {
-    handlers!(suggestion::create_suggestion)
+    handlers!(suggestion::create_suggestion, suggestion::list_my_suggestion)
 }

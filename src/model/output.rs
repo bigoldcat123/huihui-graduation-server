@@ -81,6 +81,23 @@ pub struct NameValue {
     pub value: f64,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Suggestion {
+    pub id: i32,
+    pub content: String,
+    pub images: Option<Vec<String>>,
+    #[serde(rename = "type")]
+    pub r#type: String,
+    pub status: String,
+    pub food: Option<FoodWithTags>,
+    pub restaurant: Option<Restaurant>,
+    pub reviewer_id: Option<i32>,
+    pub review_comment: Option<String>,
+    pub user_id: i32,
+    pub created_at: String,
+    pub reviewed_at: Option<String>,
+}
+
 impl From<raw::User> for CurrentUser {
     fn from(user: raw::User) -> Self {
         CurrentUser {
