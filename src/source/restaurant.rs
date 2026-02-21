@@ -67,3 +67,28 @@ pub async fn create_restaurant(
     .await?;
     Ok(restaurant)
 }
+
+pub async fn update_restaurant(
+    id: i32,
+    name: &str,
+    description: Option<&str>,
+    location: &str,
+    image: &str,
+) -> Result<Restaurant, sqlx::Error> {
+    let restaurant: Restaurant = sqlx::query_as(
+        r#"
+        UPDATE restaurant
+        SET name = $1, description = $2, location = $3, image = $4
+        WHERE id = $5
+        RETURNING id, name, description, location, image
+        "#,
+    )
+    .bind(name)
+    .bind(description)
+    .bind(location)
+    .bind(image)
+    .bind(id)
+    .fetch_one(db())
+    .await?;
+    Ok(restaurant)
+}

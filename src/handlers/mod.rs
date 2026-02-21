@@ -40,7 +40,8 @@ pub fn restaurant_handlers() -> Vec<HandlerModifier> {
         restaurant::list_restaurants_simple,
         restaurant::list_foods_by_restaurant_id,
         restaurant::list_restaurants_by_page,
-        restaurant::create_restaurant
+        restaurant::create_restaurant,
+        restaurant::update_restaurant
     )
 }
 

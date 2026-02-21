@@ -80,6 +80,15 @@ pub struct CreateRestaurantInput {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct UpdateRestaurantInput {
+    pub id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub location: String,
+    pub image: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateFoodInput {
     pub id: i32,
     pub restaurant_id: i32,

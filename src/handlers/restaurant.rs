@@ -4,7 +4,7 @@ use faithea::{
 };
 
 use crate::{
-    model::{ApiResponse, input::CreateRestaurantInput},
+    model::{ApiResponse, input::{CreateRestaurantInput, UpdateRestaurantInput}},
     service::{self, auth::CurrentRootUserId},
 };
 
@@ -41,5 +41,11 @@ async fn list_restaurants_by_page(
 #[post("/")]
 async fn create_restaurant(ipt: Json<CreateRestaurantInput>, _root: FromRequest<CurrentRootUserId>) {
     let res: ApiResponse<_> = service::restaurant::create(ipt.0).await.into();
+    res.json()
+}
+
+#[post("/update")]
+async fn update_restaurant(ipt: Json<UpdateRestaurantInput>, _root: FromRequest<CurrentRootUserId>) {
+    let res: ApiResponse<_> = service::restaurant::update(ipt.0).await.into();
     res.json()
 }

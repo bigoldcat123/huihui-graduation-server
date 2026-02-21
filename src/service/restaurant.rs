@@ -1,6 +1,6 @@
 use crate::{
     model::{
-        input::CreateRestaurantInput,
+        input::{CreateRestaurantInput, UpdateRestaurantInput},
         output::{FoodSimple, Restaurant, RestaurantSimple},
     },
     service::error::ServiceError,
@@ -26,6 +26,18 @@ pub async fn list_by_page(page: Option<i64>, page_size: Option<i64>) -> Result<V
 
 pub async fn create(ipt: CreateRestaurantInput) -> Result<Restaurant, ServiceError> {
     let restaurant = source::restaurant::create_restaurant(
+        &ipt.name,
+        ipt.description.as_deref(),
+        &ipt.location,
+        &ipt.image,
+    )
+    .await?;
+    Ok(Restaurant::from(restaurant))
+}
+
+pub async fn update(ipt: UpdateRestaurantInput) -> Result<Restaurant, ServiceError> {
+    let restaurant = source::restaurant::update_restaurant(
+        ipt.id,
         &ipt.name,
         ipt.description.as_deref(),
         &ipt.location,
