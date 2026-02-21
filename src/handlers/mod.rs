@@ -46,6 +46,7 @@ pub fn suggestion_handlers() -> Vec<HandlerModifier> {
     handlers!(
         suggestion::create_suggestion,
         suggestion::list_my_suggestion,
+        suggestion::get_suggestion_by_id,
         suggestion::list_suggestion_by_page,
         suggestion::review_suggestion
     )

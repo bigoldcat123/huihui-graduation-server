@@ -27,6 +27,32 @@ pub async fn create_suggestion(
     Ok(new_id)
 }
 
+pub async fn get_suggestion_by_id(suggestion_id: i32) -> Result<Suggestion, sqlx::Error> {
+    let suggestion: Suggestion = sqlx::query_as(
+        r#"
+        SELECT
+            id,
+            content,
+            images,
+            type::text AS type,
+            status::text AS status,
+            food_id,
+            restaurant_id,
+            reviewer_id,
+            review_comment,
+            user_id,
+            created_at,
+            reviewed_at
+        FROM suggestion
+        WHERE id = $1
+        "#,
+    )
+    .bind(suggestion_id)
+    .fetch_one(db())
+    .await?;
+    Ok(suggestion)
+}
+
 pub async fn list_my_suggestions(user_id: i32) -> Result<Vec<Suggestion>, sqlx::Error> {
     let suggestions: Vec<Suggestion> = sqlx::query_as(
         r#"

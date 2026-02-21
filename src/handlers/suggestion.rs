@@ -14,6 +14,12 @@ async fn list_my_suggestion(user_id: FromRequest<CurrentUserId>) {
     res.json()
 }
 
+#[get("/{suggestion_id}")]
+async fn get_suggestion_by_id(suggestion_id: i32, _user_id: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::suggestion::get_by_id(suggestion_id).await.into();
+    res.json()
+}
+
 #[get("/list")]
 async fn list_suggestion_by_page(
     #[search_param] page: Option<i64>,
