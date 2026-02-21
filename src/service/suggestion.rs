@@ -111,8 +111,10 @@ async fn map_suggestions(suggestions: Vec<crate::model::raw::Suggestion>) -> Res
             reviewer_id: item.reviewer_id,
             review_comment: item.review_comment,
             user_id: item.user_id,
-            created_at: item.created_at.to_rfc3339(),
-            reviewed_at: item.reviewed_at.map(|t| t.to_rfc3339()),
+            created_at: item.created_at.format("%Y-%m-%d").to_string(),
+            reviewed_at: item
+                .reviewed_at
+                .map(|t| t.format("%Y-%m-%d").to_string()),
         });
     }
 

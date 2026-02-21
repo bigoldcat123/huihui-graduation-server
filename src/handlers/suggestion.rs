@@ -25,10 +25,15 @@ async fn list_suggestion_by_page(
     #[search_param] page: Option<i64>,
     #[search_param] page_size: Option<i64>,
     #[search_param] status: Option<String>,
-    #[search_param] r#type: Option<String>,
+    #[search_param] suggestion_type: Option<String>,
     _root: FromRequest<CurrentRootUserId>,
 ) {
-    let res: ApiResponse<_> = service::suggestion::list_by_page(page, page_size, status, r#type)
+    let res: ApiResponse<_> = service::suggestion::list_by_page(
+        page,
+        page_size,
+        status,
+        suggestion_type,
+    )
         .await
         .into();
     res.json()
