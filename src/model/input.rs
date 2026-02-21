@@ -108,3 +108,26 @@ pub struct CreateSuggestionInput {
     pub food_id: Option<i32>,
     pub restaurant_id: Option<i32>,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SuggestionReviewStatus {
+    Approved,
+    Rejected,
+}
+
+impl SuggestionReviewStatus {
+    pub fn as_db_str(self) -> &'static str {
+        match self {
+            SuggestionReviewStatus::Approved => "APPROVED",
+            SuggestionReviewStatus::Rejected => "REJECTED",
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ReviewSuggestionInput {
+    pub suggestion_id: i32,
+    pub status: SuggestionReviewStatus,
+    pub review_comment: String,
+}

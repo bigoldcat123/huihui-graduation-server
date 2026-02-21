@@ -84,3 +84,36 @@ pub async fn list_suggestions_by_page(page: i64, page_size: i64) -> Result<Vec<S
     .await?;
     Ok(suggestions)
 }
+
+pub async fn review_suggestion(
+    suggestion_id: i32,
+    reviewer_id: i32,
+    status: &str,
+    review_comment: &str,
+) -> Result<(), sqlx::Error> {
+    let affected = sqlx::query(
+        r#"
+        UPDATE suggestion
+        SET
+            status = $1::suggestion_status,
+            reviewer_id = $2,
+            review_comment = $3,
+            reviewed_at = CURRENT_TIMESTAMP
+        WHERE id = $4
+          AND status = 'PENDING'
+        "#,
+    )
+    .bind(status)
+    .bind(reviewer_id)
+    .bind(review_comment)
+    .bind(suggestion_id)
+    .execute(db())
+    .await?
+    .rows_affected();
+
+    if affected == 0 {
+        return Err(sqlx::Error::RowNotFound);
+    }
+
+    Ok(())
+}

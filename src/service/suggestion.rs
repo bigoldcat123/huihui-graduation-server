@@ -1,5 +1,5 @@
 use crate::{
-    model::{input::CreateSuggestionInput, output::{FoodTag, FoodWithTags, Restaurant, Suggestion}},
+    model::{input::{CreateSuggestionInput, ReviewSuggestionInput}, output::{FoodTag, FoodWithTags, Restaurant, Suggestion}},
     service::error::ServiceError,
     source,
 };
@@ -28,6 +28,17 @@ pub async fn list_by_page(page: Option<i64>, page_size: Option<i64>) -> Result<V
     let page_size = page_size.unwrap_or(10);
     let suggestions = source::suggestion::list_suggestions_by_page(page, page_size).await?;
     map_suggestions(suggestions).await
+}
+
+pub async fn review(root_user_id: i32, ipt: ReviewSuggestionInput) -> Result<(), ServiceError> {
+    source::suggestion::review_suggestion(
+        ipt.suggestion_id,
+        root_user_id,
+        ipt.status.as_db_str(),
+        &ipt.review_comment,
+    )
+    .await?;
+    Ok(())
 }
 
 async fn map_suggestions(suggestions: Vec<crate::model::raw::Suggestion>) -> Result<Vec<Suggestion>, ServiceError> {
