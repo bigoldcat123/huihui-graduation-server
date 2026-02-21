@@ -23,10 +23,24 @@ pub async fn list_my(user_id: i32) -> Result<Vec<Suggestion>, ServiceError> {
     map_suggestions(suggestions).await
 }
 
-pub async fn list_by_page(page: Option<i64>, page_size: Option<i64>) -> Result<Vec<Suggestion>, ServiceError> {
+pub async fn list_by_page(
+    page: Option<i64>,
+    page_size: Option<i64>,
+    status: Option<String>,
+    suggestion_type: Option<String>,
+) -> Result<Vec<Suggestion>, ServiceError> {
     let page = page.unwrap_or(1);
     let page_size = page_size.unwrap_or(10);
-    let suggestions = source::suggestion::list_suggestions_by_page(page, page_size).await?;
+    let status = normalize_filter_enum(status);
+    let suggestion_type = normalize_filter_enum(suggestion_type);
+    log::info!("status: {:?}, type: {:?}", status, suggestion_type);
+    let suggestions = source::suggestion::list_suggestions_by_page(
+        page,
+        page_size,
+        status.as_deref(),
+        suggestion_type.as_deref(),
+    )
+    .await?;
     map_suggestions(suggestions).await
 }
 
@@ -103,4 +117,10 @@ async fn map_suggestions(suggestions: Vec<crate::model::raw::Suggestion>) -> Res
     }
 
     Ok(result)
+}
+
+fn normalize_filter_enum(input: Option<String>) -> Option<String> {
+    input
+        .map(|s| s.trim().to_uppercase())
+        .filter(|s| !s.is_empty())
 }

@@ -80,7 +80,12 @@ pub async fn list_my_suggestions(user_id: i32) -> Result<Vec<Suggestion>, sqlx::
     Ok(suggestions)
 }
 
-pub async fn list_suggestions_by_page(page: i64, page_size: i64) -> Result<Vec<Suggestion>, sqlx::Error> {
+pub async fn list_suggestions_by_page(
+    page: i64,
+    page_size: i64,
+    status: Option<&str>,
+    suggestion_type: Option<&str>,
+) -> Result<Vec<Suggestion>, sqlx::Error> {
     let page = if page < 1 { 1 } else { page };
     let page_size = page_size.clamp(1, 100);
     let offset = (page - 1) * page_size;
@@ -100,12 +105,16 @@ pub async fn list_suggestions_by_page(page: i64, page_size: i64) -> Result<Vec<S
             created_at,
             reviewed_at
         FROM suggestion
+        WHERE ($3::suggestion_status IS NULL OR status = $3::suggestion_status)
+          AND ($4::suggestion_type IS NULL OR type = $4::suggestion_type)
         ORDER BY created_at DESC, id DESC
         LIMIT $1 OFFSET $2
         "#,
     )
     .bind(page_size)
     .bind(offset)
+    .bind(status)
+    .bind(suggestion_type)
     .fetch_all(db())
     .await?;
     Ok(suggestions)

@@ -724,6 +724,7 @@ dependencies = [
  "env_logger",
  "faithea",
  "jsonwebtoken",
+ "log",
  "rand 0.10.0",
  "serde",
  "serde_json",
