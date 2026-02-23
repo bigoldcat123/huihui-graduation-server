@@ -70,3 +70,12 @@ pub struct Suggestion {
     pub created_at: DateTime<Local>,
     pub reviewed_at: Option<DateTime<Local>>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct TodoLog {
+    pub id: i32,
+    pub suggestion_id: i32,
+    pub suggestion_status: String,
+    pub content: String,
+    pub create_time: DateTime<Local>,
+}

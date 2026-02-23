@@ -111,6 +111,12 @@ pub struct Suggestion {
     pub reviewed_at: Option<String>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct TodoLogItem {
+    pub content: String,
+    pub create_time: String,
+}
+
 impl From<raw::User> for CurrentUser {
     fn from(user: raw::User) -> Self {
         CurrentUser {

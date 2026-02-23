@@ -1,5 +1,5 @@
 use crate::{
-    model::{input::{CreateSuggestionInput, ReviewSuggestionInput}, output::{FoodTag, FoodWithTags, Restaurant, Suggestion}},
+    model::{input::{CreateSuggestionInput, ReviewSuggestionInput}, output::{FoodTag, FoodWithTags, Restaurant, Suggestion, TodoLogItem}},
     service::error::ServiceError,
     source,
 };
@@ -66,6 +66,35 @@ pub async fn review(root_user_id: i32, ipt: ReviewSuggestionInput) -> Result<(),
     )
     .await?;
     Ok(())
+}
+
+pub async fn list_todo_logs(
+    suggestion_id: i32,
+    suggestion_status: String,
+) -> Result<Vec<TodoLogItem>, ServiceError> {
+    let db_status = suggestion_status.trim().to_uppercase();
+
+    if db_status == "APPROVED" {
+        let suggestion = source::suggestion::get_suggestion_by_id(suggestion_id).await?;
+        return Ok(vec![TodoLogItem {
+            content: suggestion.content,
+            create_time: suggestion.created_at.format("%Y-%m-%d").to_string(),
+        }]);
+    }
+
+    let logs = source::todo_log::list_todo_logs_by_suggestion_and_status(
+        suggestion_id,
+        &db_status,
+    )
+    .await?;
+
+    Ok(logs
+        .into_iter()
+        .map(|x| TodoLogItem {
+            content: x.content,
+            create_time: x.create_time.format("%Y-%m-%d").to_string(),
+        })
+        .collect())
 }
 
 async fn map_suggestions(suggestions: Vec<crate::model::raw::Suggestion>) -> Result<Vec<Suggestion>, ServiceError> {
