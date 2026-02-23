@@ -184,3 +184,29 @@ pub async fn review_suggestion(
 
     Ok(())
 }
+
+pub async fn update_status_if_current(
+    suggestion_id: i32,
+    current_status: &str,
+    next_status: &str,
+) -> Result<(), sqlx::Error> {
+    let affected = sqlx::query(
+        r#"
+        UPDATE suggestion
+        SET status = $1::suggestion_status
+        WHERE id = $2
+          AND status = $3::suggestion_status
+        "#,
+    )
+    .bind(next_status)
+    .bind(suggestion_id)
+    .bind(current_status)
+    .execute(db())
+    .await?
+    .rows_affected();
+
+    if affected == 0 {
+        return Err(sqlx::Error::RowNotFound);
+    }
+    Ok(())
+}

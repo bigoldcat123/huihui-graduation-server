@@ -24,3 +24,23 @@ pub async fn list_todo_logs_by_suggestion_and_status(
     .await?;
     Ok(rows)
 }
+
+pub async fn create_todo_log(
+    suggestion_id: i32,
+    suggestion_status: &str,
+    content: &str,
+) -> Result<i32, sqlx::Error> {
+    let new_id: i32 = sqlx::query_scalar(
+        r#"
+        INSERT INTO todo_log (suggestion_id, suggestion_status, content)
+        VALUES ($1, $2::suggestion_status, $3)
+        RETURNING id
+        "#,
+    )
+    .bind(suggestion_id)
+    .bind(suggestion_status)
+    .bind(content)
+    .fetch_one(db())
+    .await?;
+    Ok(new_id)
+}

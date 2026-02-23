@@ -53,6 +53,8 @@ pub fn suggestion_handlers() -> Vec<HandlerModifier> {
         suggestion::list_todo_logs_by_suggestion_status,
         suggestion::list_suggestion_by_page,
         suggestion::list_todos_by_page,
-        suggestion::review_suggestion
+        suggestion::review_suggestion,
+        suggestion::move_suggestion_to_next_stage,
+        suggestion::add_todo_log
     )
 }

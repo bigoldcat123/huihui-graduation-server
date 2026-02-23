@@ -1,5 +1,5 @@
 use crate::{
-    model::{input::{CreateSuggestionInput, ReviewSuggestionInput}, output::{FoodTag, FoodWithTags, Restaurant, Suggestion, TodoLogItem}},
+    model::{input::{AddTodoLogInput, CreateSuggestionInput, MoveSuggestionNextInput, ReviewSuggestionInput}, output::{FoodTag, FoodWithTags, Restaurant, Suggestion, TodoLogItem}},
     service::error::ServiceError,
     source,
 };
@@ -66,6 +66,59 @@ pub async fn review(root_user_id: i32, ipt: ReviewSuggestionInput) -> Result<(),
     )
     .await?;
     Ok(())
+}
+
+pub async fn move_to_next_stage(ipt: MoveSuggestionNextInput) -> Result<String, ServiceError> {
+    let suggestion = source::suggestion::get_suggestion_by_id(ipt.suggestion_id).await?;
+    let current = suggestion.status.to_uppercase();
+    let next = match current.as_str() {
+        "APPROVED" => "PREPARING",
+        "PREPARING" => "PROCESSING",
+        "PROCESSING" => "FINISHED",
+        "FINISHED" => {
+            return Err(ServiceError::PermissionDenied(
+                "suggestion already at final stage FINISHED".to_string(),
+            ));
+        }
+        _ => {
+            return Err(ServiceError::PermissionDenied(format!(
+                "status {} cannot move to next stage",
+                suggestion.status
+            )));
+        }
+    };
+
+    source::suggestion::update_status_if_current(ipt.suggestion_id, &current, next).await?;
+    let _ = source::todo_log::create_todo_log(
+        ipt.suggestion_id,
+        next,
+        &format!("move suggestion {} from {} to {}", ipt.suggestion_id, current, next),
+    )
+    .await?;
+    Ok(next.to_string())
+}
+
+pub async fn add_todo_log_by_current_status(ipt: AddTodoLogInput) -> Result<i32, ServiceError> {
+    let expected = if ipt.current_status.trim().eq_ignore_ascii_case("ACCEPTED") {
+        "APPROVED".to_string()
+    } else {
+        ipt.current_status.trim().to_uppercase()
+    };
+    let suggestion = source::suggestion::get_suggestion_by_id(ipt.suggestion_id).await?;
+    let current = suggestion.status.to_uppercase();
+    if current != expected {
+        return Err(ServiceError::PermissionDenied(format!(
+            "status mismatch, current is {}, input is {}",
+            current, expected
+        )));
+    }
+    let new_id = source::todo_log::create_todo_log(
+        ipt.suggestion_id,
+        &current,
+        &ipt.log_content,
+    )
+    .await?;
+    Ok(new_id)
 }
 
 pub async fn list_todo_logs(

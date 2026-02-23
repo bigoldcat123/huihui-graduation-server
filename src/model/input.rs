@@ -148,3 +148,15 @@ pub struct ReviewSuggestionInput {
     pub status: SuggestionReviewStatus,
     pub review_comment: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct MoveSuggestionNextInput {
+    pub suggestion_id: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AddTodoLogInput {
+    pub suggestion_id: i32,
+    pub current_status: String,
+    pub log_content: String,
+}

@@ -1,6 +1,6 @@
 use faithea::{data::{Json, inbound::FromRequest}, get, post};
 
-use crate::{model::{ApiResponse, input::{CreateSuggestionInput, ReviewSuggestionInput}}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
+use crate::{model::{ApiResponse, input::{AddTodoLogInput, CreateSuggestionInput, MoveSuggestionNextInput, ReviewSuggestionInput}}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
 
 #[post("/")]
 async fn create_suggestion(ipt: Json<CreateSuggestionInput>, user_id: FromRequest<CurrentUserId>) {
@@ -65,5 +65,25 @@ async fn list_todos_by_page(
 #[post("/review")]
 async fn review_suggestion(ipt: Json<ReviewSuggestionInput>, root: FromRequest<CurrentRootUserId>) {
     let res: ApiResponse<_> = service::suggestion::review(root.into_inner().0, ipt.0).await.into();
+    res.json()
+}
+
+#[post("/next_stage")]
+async fn move_suggestion_to_next_stage(
+    ipt: Json<MoveSuggestionNextInput>,
+    _root: FromRequest<CurrentRootUserId>,
+) {
+    let res: ApiResponse<_> = service::suggestion::move_to_next_stage(ipt.0).await.into();
+    res.json()
+}
+
+#[post("/todo_log")]
+async fn add_todo_log(
+    ipt: Json<AddTodoLogInput>,
+    _root: FromRequest<CurrentRootUserId>,
+) {
+    let res: ApiResponse<_> = service::suggestion::add_todo_log_by_current_status(ipt.0)
+        .await
+        .into();
     res.json()
 }
