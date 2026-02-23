@@ -96,3 +96,12 @@ CREATE TABLE "suggestion" (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     reviewed_at TIMESTAMP
 );
+
+
+CREATE TABLE "todo_log" (
+    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    suggestion_id int NOT NULL REFERENCES "suggestion"(id) ON DELETE CASCADE,
+    suggestion_status suggestion_status NOT NULL,
+    content TEXT NOT NULL,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

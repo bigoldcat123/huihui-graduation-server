@@ -39,6 +39,18 @@ async fn list_suggestion_by_page(
     res.json()
 }
 
+#[get("/list/todos")]
+async fn list_todos_by_page(
+    #[search_param] page: Option<i64>,
+    #[search_param] page_size: Option<i64>,
+    _root: FromRequest<CurrentRootUserId>,
+) {
+    let res: ApiResponse<_> = service::suggestion::list_todos_by_page(page, page_size)
+        .await
+        .into();
+    res.json()
+}
+
 #[post("/review")]
 async fn review_suggestion(ipt: Json<ReviewSuggestionInput>, root: FromRequest<CurrentRootUserId>) {
     let res: ApiResponse<_> = service::suggestion::review(root.into_inner().0, ipt.0).await.into();

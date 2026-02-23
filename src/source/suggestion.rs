@@ -120,6 +120,38 @@ pub async fn list_suggestions_by_page(
     Ok(suggestions)
 }
 
+pub async fn list_todos_by_page(page: i64, page_size: i64) -> Result<Vec<Suggestion>, sqlx::Error> {
+    let page = if page < 1 { 1 } else { page };
+    let page_size = page_size.clamp(1, 100);
+    let offset = (page - 1) * page_size;
+    let suggestions: Vec<Suggestion> = sqlx::query_as(
+        r#"
+        SELECT
+            id,
+            content,
+            images,
+            type::text AS type,
+            status::text AS status,
+            food_id,
+            restaurant_id,
+            reviewer_id,
+            review_comment,
+            user_id,
+            created_at,
+            reviewed_at
+        FROM suggestion
+        WHERE status IN ('APPROVED', 'PREPARING', 'PROCESSING', 'FINISHED')
+        ORDER BY created_at DESC, id DESC
+        LIMIT $1 OFFSET $2
+        "#,
+    )
+    .bind(page_size)
+    .bind(offset)
+    .fetch_all(db())
+    .await?;
+    Ok(suggestions)
+}
+
 pub async fn review_suggestion(
     suggestion_id: i32,
     reviewer_id: i32,

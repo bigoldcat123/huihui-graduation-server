@@ -50,6 +50,13 @@ pub async fn get_by_id(suggestion_id: i32) -> Result<Suggestion, ServiceError> {
     data.pop().ok_or(ServiceError::SqlError(sqlx::Error::RowNotFound))
 }
 
+pub async fn list_todos_by_page(page: Option<i64>, page_size: Option<i64>) -> Result<Vec<Suggestion>, ServiceError> {
+    let page = page.unwrap_or(1);
+    let page_size = page_size.unwrap_or(10);
+    let suggestions = source::suggestion::list_todos_by_page(page, page_size).await?;
+    map_suggestions(suggestions).await
+}
+
 pub async fn review(root_user_id: i32, ipt: ReviewSuggestionInput) -> Result<(), ServiceError> {
     source::suggestion::review_suggestion(
         ipt.suggestion_id,
