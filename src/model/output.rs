@@ -95,6 +95,12 @@ pub struct NameValue {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct ReactionCount {
+    pub like: i32,
+    pub dislike: i32,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Suggestion {
     pub id: i32,
     pub content: String,

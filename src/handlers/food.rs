@@ -18,6 +18,12 @@ async fn recommendation_reaction(
     res.json()
 }
 
+#[get("/recommendation/reaction/count")]
+async fn reaction_count(token: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::food::count_reactions(token.into_inner().0).await.into();
+    res.json()
+}
+
 #[post("/consecutiveSuggest")]
 async fn consecutive_suggest(food_ids: Json<SuggestionInput>, token: FromRequest<CurrentUserId>) {
     let res: ApiResponse<_> = service::food::consecutive_suggest(food_ids.0, token.0).await.into();

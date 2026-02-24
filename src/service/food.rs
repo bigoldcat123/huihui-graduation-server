@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{model::{input::{CreateFoodInput, Reaction, RecommendationReactionInput, SuggestionInput, UpdateFoodInput}, output::{FoodTag, FoodWithTags}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
+use crate::{model::{input::{CreateFoodInput, Reaction, RecommendationReactionInput, SuggestionInput, UpdateFoodInput}, output::{FoodTag, FoodWithTags, ReactionCount}, raw::Tag}, service::error::ServiceError, source::{self, operation}};
 use rand::seq::SliceRandom;
 use source::food::FoodRow;
 
@@ -151,6 +151,14 @@ pub async fn save_reaction(user_id: i32, ipt: RecommendationReactionInput) -> Re
     };
     let op_id = operation::save_operation(user_id, ipt.food_id, reaction_name, weight).await?;
     Ok(op_id)
+}
+
+pub async fn count_reactions(user_id: i32) -> Result<ReactionCount, ServiceError> {
+    let row = operation::count_like_dislike_by_user(user_id).await?;
+    Ok(ReactionCount {
+        like: row.like,
+        dislike: row.dislike,
+    })
 }
 
 pub async fn consecutive_suggest(ipt:SuggestionInput,user_id:i32) -> Result<Vec<FoodRow>, ServiceError> {
