@@ -161,6 +161,42 @@ pub async fn count_reactions(user_id: i32) -> Result<ReactionCount, ServiceError
     })
 }
 
+pub async fn top_liked_tags(user_id: i32) -> Result<Vec<FoodTag>, ServiceError> {
+    let foods = source::food::list_user_liked_foods(user_id).await?;
+    let food_tags = cal_food_tags(&foods).await?;
+    let user_profile = cal_user_profile(food_tags);
+
+    let mut top = user_profile.into_iter().collect::<Vec<(i32, f32)>>();
+    top.sort_by(|a, b| {
+        b.1.partial_cmp(&a.1)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| a.0.cmp(&b.0))
+    });
+
+    let top_ids = top
+        .into_iter()
+        .take(3)
+        .map(|(tag_id, _)| tag_id)
+        .collect::<Vec<i32>>();
+    if top_ids.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let tags = source::tag::list_tags().await?;
+    let mut tags_map = tags
+        .into_iter()
+        .map(|t| (t.id, FoodTag { id: t.id, name: t.name, image: t.image }))
+        .collect::<HashMap<i32, FoodTag>>();
+
+    let mut result = Vec::new();
+    for id in top_ids {
+        if let Some(tag) = tags_map.remove(&id) {
+            result.push(tag);
+        }
+    }
+    Ok(result)
+}
+
 pub async fn consecutive_suggest(ipt:SuggestionInput,user_id:i32) -> Result<Vec<FoodRow>, ServiceError> {
 
     for &s_id in ipt.selected_food_ids.iter() {

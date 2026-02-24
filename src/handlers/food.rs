@@ -24,6 +24,12 @@ async fn reaction_count(token: FromRequest<CurrentUserId>) {
     res.json()
 }
 
+#[get("/topTags")]
+async fn top_liked_tags(token: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::food::top_liked_tags(token.into_inner().0).await.into();
+    res.json()
+}
+
 #[post("/consecutiveSuggest")]
 async fn consecutive_suggest(food_ids: Json<SuggestionInput>, token: FromRequest<CurrentUserId>) {
     let res: ApiResponse<_> = service::food::consecutive_suggest(food_ids.0, token.0).await.into();
