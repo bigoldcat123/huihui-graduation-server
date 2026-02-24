@@ -178,3 +178,49 @@ pub async fn list_topics_by_user_id(
     .await?;
     Ok(topics)
 }
+
+pub async fn ensure_topic_owner(topic_id: i32, user_id: i32) -> Result<(), sqlx::Error> {
+    let exists: Option<i32> = sqlx::query_scalar(
+        r#"
+        SELECT id
+        FROM topic
+        WHERE id = $1 AND user_id = $2
+        "#,
+    )
+    .bind(topic_id)
+    .bind(user_id)
+    .fetch_optional(db())
+    .await?;
+
+    if exists.is_none() {
+        return Err(sqlx::Error::RowNotFound);
+    }
+    Ok(())
+}
+
+pub async fn delete_topic_with_comments(topic_id: i32) -> Result<(), sqlx::Error> {
+    let mut tx = db().begin().await?;
+
+    // Soft-delete only the topic id from path param.
+    let affected = sqlx::query(
+        r#"
+        UPDATE topic
+        SET
+            user_id = 3,
+            content = 'deleted',
+            images = NULL
+        WHERE id = $1
+        "#,
+    )
+    .bind(topic_id)
+    .execute(&mut *tx)
+    .await?
+    .rows_affected();
+
+    if affected == 0 {
+        return Err(sqlx::Error::RowNotFound);
+    }
+
+    tx.commit().await?;
+    Ok(())
+}

@@ -41,7 +41,8 @@ pub fn topic_handlers() -> Vec<HandlerModifier> {
         topic::create_topic,
         topic::like_topic,
         topic::list_comment,
-        topic::list_my_topics
+        topic::list_my_topics,
+        topic::delete_topic
     )
 }
 

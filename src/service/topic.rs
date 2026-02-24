@@ -53,3 +53,9 @@ pub async fn list_my_topics(user_id: i32) -> Result<Vec<TopicListItem>, ServiceE
     let raw_topics = source::topic::list_topics_by_user_id(user_id, user_id).await?;
     Ok(raw_topics.into_iter().map(TopicListItem::from).collect())
 }
+
+pub async fn delete(topic_id: i32, user_id: i32) -> Result<(), ServiceError> {
+    source::topic::ensure_topic_owner(topic_id, user_id).await?;
+    source::topic::delete_topic_with_comments(topic_id).await?;
+    Ok(())
+}
