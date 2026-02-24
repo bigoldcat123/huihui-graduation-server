@@ -12,6 +12,7 @@ pub struct FoodRow {
     pub name: String,
     pub description: String,
     pub image: String,
+    pub price: f64,
 }
 
 pub async fn init_suggest(tags: Vec<Tag>) -> Result<Vec<FoodRow>, sqlx::Error> {
@@ -22,7 +23,7 @@ pub async fn init_suggest(tags: Vec<Tag>) -> Result<Vec<FoodRow>, sqlx::Error> {
         let picked_ids: Vec<i32> = picked.iter().copied().collect();
         let row: Option<FoodRow> = sqlx::query_as(
             r#"
-            SELECT f.id, f.restaurant_id, f.name, f.description, f.image
+            SELECT f.id, f.restaurant_id, f.name, f.description, f.image, f.price::float8 AS price
             FROM food f
             JOIN food_tag ft ON ft.food_id = f.id
             WHERE ft.tag_id = $1
@@ -47,7 +48,7 @@ pub async fn init_suggest(tags: Vec<Tag>) -> Result<Vec<FoodRow>, sqlx::Error> {
 pub async fn list_foods() -> Result<Vec<FoodRow>, sqlx::Error> {
     let foods: Vec<FoodRow> = sqlx::query_as(
         r#"
-        SELECT id, restaurant_id, name, description, image
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
         FROM food
         ORDER BY id
         "#,
@@ -62,7 +63,7 @@ pub async fn list_foods_by_page(page: i64, page_size: i64) -> Result<Vec<FoodRow
     let offset = (page - 1) * page_size;
     let foods: Vec<FoodRow> = sqlx::query_as(
         r#"
-        SELECT id, restaurant_id, name, description, image
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
         FROM food
         ORDER BY id
         LIMIT $1 OFFSET $2
@@ -78,7 +79,7 @@ pub async fn list_foods_by_page(page: i64, page_size: i64) -> Result<Vec<FoodRow
 pub async fn list_foods_by_restaurant_id(restaurant_id: i32) -> Result<Vec<FoodRow>, sqlx::Error> {
     let foods: Vec<FoodRow> = sqlx::query_as(
         r#"
-        SELECT id, restaurant_id, name, description, image
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
         FROM food
         WHERE restaurant_id = $1
         ORDER BY id
@@ -97,7 +98,7 @@ pub async fn list_food_not_in_ids(ids: &Vec<i32>) -> Result<Vec<FoodRow>, sqlx::
 
     let foods: Vec<FoodRow> = sqlx::query_as(
         r#"
-        SELECT id, restaurant_id, name, description, image
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
         FROM food
         WHERE id != ALL($1)
         ORDER BY id
@@ -116,7 +117,7 @@ pub async fn list_food_in_ids(ids: &Vec<i32>) -> Result<Vec<FoodRow>, sqlx::Erro
 
     let foods: Vec<FoodRow> = sqlx::query_as(
         r#"
-        SELECT id, restaurant_id, name, description, image
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
         FROM food
         WHERE id = ANY($1)
         ORDER BY id
@@ -132,7 +133,7 @@ pub async fn list_user_liked_foods(_user_id: i32) -> Result<Vec<FoodRow>, sqlx::
     let foods: Vec<FoodRow> = sqlx::query_as(
         r#"
         SELECT
-            f.id, f.restaurant_id, f.name, f.description, f.image
+            f.id, f.restaurant_id, f.name, f.description, f.image, f.price::float8 AS price
         FROM operation o
         JOIN food f ON f.id = o.food_id
         WHERE o.user_id = $1
@@ -150,7 +151,7 @@ pub async fn list_user_liked_foods(_user_id: i32) -> Result<Vec<FoodRow>, sqlx::
 pub async fn get_food_by_id(id: i32) -> Result<FoodRow, sqlx::Error> {
     let food: FoodRow = sqlx::query_as(
         r#"
-        SELECT id, restaurant_id, name, description, image
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
         FROM food
         WHERE id = $1
         "#,
@@ -166,18 +167,20 @@ pub async fn create_food(
     name: &str,
     description: &str,
     image: &str,
+    price: f64,
 ) -> Result<FoodRow, sqlx::Error> {
     let food: FoodRow = sqlx::query_as(
         r#"
-        INSERT INTO food (restaurant_id, name, description, image)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id, restaurant_id, name, description, image
+        INSERT INTO food (restaurant_id, name, description, image, price)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, restaurant_id, name, description, image, price::float8 AS price
         "#,
     )
     .bind(restaurant_id)
     .bind(name)
     .bind(description)
     .bind(image)
+    .bind(price)
     .fetch_one(db())
     .await?;
     Ok(food)
@@ -217,6 +220,7 @@ pub async fn update_food(
     name: &str,
     description: &str,
     image: &str,
+    price: f64,
 ) -> Result<FoodRow, sqlx::Error> {
     let food: FoodRow = sqlx::query_as(
         r#"
@@ -225,9 +229,10 @@ pub async fn update_food(
             restaurant_id = $2,
             name = $3,
             description = $4,
-            image = $5
+            image = $5,
+            price = $6
         WHERE id = $1
-        RETURNING id, restaurant_id, name, description, image
+        RETURNING id, restaurant_id, name, description, image, price::float8 AS price
         "#,
     )
     .bind(id)
@@ -235,6 +240,7 @@ pub async fn update_food(
     .bind(name)
     .bind(description)
     .bind(image)
+    .bind(price)
     .fetch_one(db())
     .await?;
     Ok(food)

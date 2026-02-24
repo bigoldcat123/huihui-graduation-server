@@ -63,6 +63,7 @@ pub struct FoodWithTags {
     pub name: String,
     pub description: String,
     pub image: String,
+    pub price: f64,
     pub tags: Vec<FoodTag>,
 }
 
@@ -71,6 +72,7 @@ pub struct FoodSimple {
     pub id: i32,
     pub name: String,
     pub image: String,
+    pub price: f64,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -80,6 +82,7 @@ pub struct FoodWithRestaurant {
     pub name: String,
     pub description: String,
     pub image: String,
+    pub price: f64,
     pub restaurant: Restaurant,
 }
 

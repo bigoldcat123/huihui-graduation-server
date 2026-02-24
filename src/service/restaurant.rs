@@ -57,6 +57,7 @@ pub async fn list_foods_by_restaurant_id(
             id: food.id,
             name: food.name,
             image: food.image,
+            price: food.price,
         })
         .collect())
 }

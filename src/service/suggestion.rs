@@ -166,6 +166,7 @@ async fn map_suggestions(suggestions: Vec<crate::model::raw::Suggestion>) -> Res
                     name: food.name,
                     description: food.description,
                     image: food.image,
+                    price: food.price,
                     tags: tags
                         .into_iter()
                         .map(|t| FoodTag {

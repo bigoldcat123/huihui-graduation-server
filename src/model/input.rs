@@ -62,6 +62,7 @@ pub struct CreateFoodInput {
     pub name: String,
     pub description: String,
     pub image: String,
+    pub price: f64,
     pub tag_ids: Option<Vec<i32>>,
 }
 
@@ -95,6 +96,7 @@ pub struct UpdateFoodInput {
     pub name: String,
     pub description: String,
     pub image: String,
+    pub price: f64,
     pub tag_ids: Vec<i32>,
 }
 

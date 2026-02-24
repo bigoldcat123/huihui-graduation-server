@@ -51,6 +51,7 @@ pub async fn list_liked_foods(user_id: i32) -> Result<Vec<FoodWithRestaurant>, S
             name: food.name,
             description: food.description,
             image: food.image,
+            price: food.price,
             restaurant: Restaurant::from(restaurant),
         });
     }
@@ -72,6 +73,7 @@ pub async fn list_foods_by_page(page: Option<i64>, page_size: Option<i64>) -> Re
             name: food.name,
             description: food.description,
             image: food.image,
+            price: food.price,
             tags: tags
                 .into_iter()
                 .map(|t| FoodTag {
@@ -91,6 +93,7 @@ pub async fn create_food(ipt: CreateFoodInput) -> Result<FoodWithTags, ServiceEr
         &ipt.name,
         &ipt.description,
         &ipt.image,
+        ipt.price,
     )
     .await?;
 
@@ -109,6 +112,7 @@ pub async fn create_food(ipt: CreateFoodInput) -> Result<FoodWithTags, ServiceEr
         name: food.name,
         description: food.description,
         image: food.image,
+        price: food.price,
         tags: tags
             .into_iter()
             .map(|t| FoodTag {
@@ -127,6 +131,7 @@ pub async fn update_food(ipt: UpdateFoodInput) -> Result<FoodWithTags, ServiceEr
         &ipt.name,
         &ipt.description,
         &ipt.image,
+        ipt.price,
     )
     .await?;
 
@@ -144,6 +149,7 @@ pub async fn update_food(ipt: UpdateFoodInput) -> Result<FoodWithTags, ServiceEr
         name: food.name,
         description: food.description,
         image: food.image,
+        price: food.price,
         tags: tags
             .into_iter()
             .map(|t| FoodTag {
