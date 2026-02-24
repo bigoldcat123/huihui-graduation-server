@@ -44,14 +44,17 @@ CREATE TABLE "operation" (
     weight FLOAT4 NOT NULL
 );
 
-CREATE TABLE "topic" (
-    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id int NOT NULL REFERENCES "_user"(id),
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    is_top Boolean NOT NULL DEFAULT TRUE,
-    images TEXT NULL,
-    create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE topic(
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    user_id integer NOT NULL,
+    title varchar(255) NOT NULL,
+    content text NOT NULL,
+    images text,
+    create_at timestamp with time zone NOT NULL DEFAULT '2026-02-13 05:24:35.438949'::timestamp without time zone,
+    is_top boolean NOT NULL DEFAULT true,
+    deleted boolean NOT NULL DEFAULT false,
+    PRIMARY KEY(id),
+    CONSTRAINT topic_user_id_fkey FOREIGN key(user_id) REFERENCES _user(id)
 );
 
 CREATE TABLE "reply" (

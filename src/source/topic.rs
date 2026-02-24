@@ -38,6 +38,7 @@ pub async fn list_topics_by_page(
             GROUP BY topic_id
         ) l ON l.topic_id = t.id
         WHERE t.is_top = TRUE
+          AND t.deleted = FALSE
         ORDER BY t.create_at DESC, t.id DESC
         LIMIT $1 OFFSET $2
         "#,
@@ -124,6 +125,7 @@ pub async fn list_comments_by_topic_id(
             GROUP BY topic_id
         ) l ON l.topic_id = t.id
         WHERE r.comment_to_id = $1
+          AND t.deleted = FALSE
         ORDER BY t.create_at ASC, t.id ASC
         "#,
     )
@@ -169,6 +171,7 @@ pub async fn list_topics_by_user_id(
             GROUP BY topic_id
         ) l ON l.topic_id = t.id
         WHERE t.user_id = $1
+          AND t.deleted = FALSE
         ORDER BY t.create_at DESC, t.id DESC
         "#,
     )
@@ -206,9 +209,7 @@ pub async fn delete_topic_with_comments(topic_id: i32) -> Result<(), sqlx::Error
         r#"
         UPDATE topic
         SET
-            user_id = 3,
-            content = 'deleted',
-            images = NULL
+            deleted = TRUE
         WHERE id = $1
         "#,
     )
