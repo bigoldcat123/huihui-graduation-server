@@ -17,6 +17,7 @@ pub fn auth_handlers() -> Vec<HandlerModifier> {
 pub fn food_handlers() -> Vec<HandlerModifier> {
     handlers!(
         food::recommendation,
+        food::list_liked_foods,
         food::recommendation_reaction,
         food::reaction_count,
         food::top_liked_tags,

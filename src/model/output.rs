@@ -74,6 +74,16 @@ pub struct FoodSimple {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct FoodWithRestaurant {
+    pub id: i32,
+    pub restaurant_id: i32,
+    pub name: String,
+    pub description: String,
+    pub image: String,
+    pub restaurant: Restaurant,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Restaurant {
     pub id: i32,
     pub name: String,

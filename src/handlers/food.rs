@@ -8,6 +8,12 @@ async fn recommendation(token: FromRequest<CurrentUserId>) {
     res.json()
 }
 
+#[get("/liked")]
+async fn list_liked_foods(token: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::food::list_liked_foods(token.0).await.into();
+    res.json()
+}
+
 #[post("/recommendation/reaction")]
 async fn recommendation_reaction(
     ipt: Json<RecommendationReactionInput>,
