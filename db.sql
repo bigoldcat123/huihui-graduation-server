@@ -16,12 +16,15 @@ CREATE TABLE "restaurant" (
     image VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE "food" (
-    id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    restaurant_id int NOT NULL REFERENCES "restaurant"(id),
-    name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    image VARCHAR(255) NOT NULL
+CREATE TABLE food(
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    restaurant_id integer NOT NULL,
+    name varchar(255) NOT NULL,
+    description text NOT NULL,
+    image varchar(255) NOT NULL,
+    price numeric(10,1) NOT NULL DEFAULT 0.0,
+    PRIMARY KEY(id),
+    CONSTRAINT food_restaurant_id_fkey FOREIGN key(restaurant_id) REFERENCES restaurant(id)
 );
 
 CREATE TABLE "tag" (
