@@ -36,7 +36,13 @@ pub fn upload_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn topic_handlers() -> Vec<HandlerModifier> {
-    handlers!(topic::list_topics, topic::create_topic, topic::like_topic, topic::list_comment)
+    handlers!(
+        topic::list_topics,
+        topic::create_topic,
+        topic::like_topic,
+        topic::list_comment,
+        topic::list_my_topics
+    )
 }
 
 pub fn tag_handlers() -> Vec<HandlerModifier> {

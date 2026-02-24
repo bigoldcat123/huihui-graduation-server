@@ -48,3 +48,8 @@ pub async fn list_comment(topic_id: i32, user_id: i32) -> Result<Vec<TopicListIt
     let raw_topics = source::topic::list_comments_by_topic_id(topic_id, user_id).await?;
     Ok(raw_topics.into_iter().map(TopicListItem::from).collect())
 }
+
+pub async fn list_my_topics(user_id: i32) -> Result<Vec<TopicListItem>, ServiceError> {
+    let raw_topics = source::topic::list_topics_by_user_id(user_id, user_id).await?;
+    Ok(raw_topics.into_iter().map(TopicListItem::from).collect())
+}

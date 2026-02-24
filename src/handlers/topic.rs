@@ -25,3 +25,9 @@ async fn list_comment(topic_id: i32, user_id: FromRequest<CurrentUserId>) {
     let res: ApiResponse<_> = service::topic::list_comment(topic_id, user_id.into_inner().0).await.into();
     res.json()
 }
+
+#[get("/my")]
+async fn list_my_topics(user_id: FromRequest<CurrentUserId>) {
+    let res: ApiResponse<_> = service::topic::list_my_topics(user_id.into_inner().0).await.into();
+    res.json()
+}
