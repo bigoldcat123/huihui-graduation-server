@@ -7,6 +7,12 @@ pub struct ReactionCountRow {
     pub dislike: i32,
 }
 
+#[derive(Debug, FromRow)]
+pub struct LikeOperationRow {
+    pub u_id: i32,
+    pub food_id: i32,
+}
+
 pub async fn save_operation(uid: i32, fid: i32, name: &str, weight: f32) -> Result<i32, sqlx::Error> {
     let new_id: i32 = sqlx::query_scalar(
         r#"
@@ -39,4 +45,21 @@ pub async fn count_like_dislike_by_user(uid: i32) -> Result<ReactionCountRow, sq
     .fetch_one(db())
     .await?;
     Ok(row)
+}
+
+pub async fn list_like_operations() -> Result<Vec<LikeOperationRow>, sqlx::Error> {
+    let rows: Vec<LikeOperationRow> = sqlx::query_as(
+        r#"
+        SELECT
+            user_id AS u_id,
+            food_id
+        FROM operation
+        WHERE name = 'like'
+          AND weight > 0
+        ORDER BY id ASC
+        "#,
+    )
+    .fetch_all(db())
+    .await?;
+    Ok(rows)
 }
