@@ -13,7 +13,12 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
     Ok(foods)
 }
 
-pub async fn recommendation(_user_id: i32) -> Result<Vec<FoodRow>, ServiceError> {
+pub async fn recommendation(_user_id: i32, is_random: Option<String>) -> Result<Vec<FoodRow>, ServiceError> {
+    if is_random.is_some() {
+        let foods = source::food::list_random_foods(10).await?;
+        return Ok(foods);
+    }
+
     let foods = source::food::list_user_liked_foods(_user_id).await?;
     let food_tag = cal_food_tags(&foods).await?;
 

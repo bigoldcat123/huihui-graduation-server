@@ -3,8 +3,11 @@ use faithea::{data::{Json, inbound::FromRequest}, get, post};
 use crate::{model::{ApiResponse, input::{CreateFoodInput, RecommendationReactionInput, SuggestionInput, UpdateFoodInput}}, service::{self, auth::{CurrentRootUserId, CurrentUserId}}};
 
 #[get("/recommendation")]
-async fn recommendation(token: FromRequest<CurrentUserId>) {
-    let res: ApiResponse<_> = service::food::recommendation(token.0).await.into();
+async fn recommendation(
+    token: FromRequest<CurrentUserId>,
+    #[search_param] is_random: Option<String>,
+) {
+    let res: ApiResponse<_> = service::food::recommendation(token.0, is_random).await.into();
     res.json()
 }
 

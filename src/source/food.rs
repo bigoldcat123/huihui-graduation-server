@@ -58,6 +58,22 @@ pub async fn list_foods() -> Result<Vec<FoodRow>, sqlx::Error> {
     Ok(foods)
 }
 
+pub async fn list_random_foods(limit: i64) -> Result<Vec<FoodRow>, sqlx::Error> {
+    let limit = if limit < 1 { 1 } else { limit };
+    let foods: Vec<FoodRow> = sqlx::query_as(
+        r#"
+        SELECT id, restaurant_id, name, description, image, price::float8 AS price
+        FROM food
+        ORDER BY RANDOM()
+        LIMIT $1
+        "#,
+    )
+    .bind(limit)
+    .fetch_all(db())
+    .await?;
+    Ok(foods)
+}
+
 pub async fn list_foods_by_page(page: i64, page_size: i64) -> Result<Vec<FoodRow>, sqlx::Error> {
     let page = if page < 1 { 1 } else { page };
     let offset = (page - 1) * page_size;
