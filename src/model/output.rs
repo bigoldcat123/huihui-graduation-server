@@ -157,7 +157,7 @@ impl From<raw::Topic> for Topic {
             images: topic
                 .images
                 .and_then(|images| serde_json::from_str::<Vec<String>>(&images).ok()),
-            create_at: topic.create_at.to_rfc3339(),
+            create_at: topic.create_at.format("%Y-%m-%d").to_string(),
         }
     }
 }
@@ -172,7 +172,7 @@ impl From<raw::TopicWithStats> for TopicListItem {
             images: topic
                 .images
                 .and_then(|images| serde_json::from_str::<Vec<String>>(&images).ok()),
-            create_at: topic.create_at.to_rfc3339(),
+            create_at: topic.create_at.format("%Y-%m-%d").to_string(),
             user_info: TopicUserInfo {
                 id: topic.user_id,
                 name: topic.user_name,
