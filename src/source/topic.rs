@@ -16,6 +16,8 @@ pub async fn list_topics_by_page(
             t.content,
             t.images,
             t.create_at,
+            t.location,
+            t.is_public,
             u.username AS user_name,
             u.email AS user_email,
             u.profile AS user_profile,
@@ -39,6 +41,7 @@ pub async fn list_topics_by_page(
         ) l ON l.topic_id = t.id
         WHERE t.is_top = TRUE
           AND t.deleted = FALSE
+          AND (t.is_public = TRUE OR t.user_id = $3)
         ORDER BY t.create_at DESC, t.id DESC
         LIMIT $1 OFFSET $2
         "#,
@@ -57,12 +60,14 @@ pub async fn create_topic(
     content: &str,
     is_top: bool,
     images: Option<&str>,
+    location: &str,
+    is_public: bool,
 ) -> Result<Topic, sqlx::Error> {
     let topic: Topic = sqlx::query_as(
         r#"
-        INSERT INTO topic (user_id, title, content, is_top, images)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id, user_id, title, content, images, create_at
+        INSERT INTO topic (user_id, title, content, is_top, images, location, is_public)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id, user_id, title, content, images, create_at, location, is_public
         "#,
     )
     .bind(user_id)
@@ -70,6 +75,8 @@ pub async fn create_topic(
     .bind(content)
     .bind(is_top)
     .bind(images)
+    .bind(location)
+    .bind(is_public)
     .fetch_one(db())
     .await?;
     Ok(topic)
@@ -102,6 +109,8 @@ pub async fn list_comments_by_topic_id(
             t.content,
             t.images,
             t.create_at,
+            t.location,
+            t.is_public,
             u.username AS user_name,
             u.email AS user_email,
             u.profile AS user_profile,
@@ -126,6 +135,7 @@ pub async fn list_comments_by_topic_id(
         ) l ON l.topic_id = t.id
         WHERE r.comment_to_id = $1
           AND t.deleted = FALSE
+          AND (t.is_public = TRUE OR t.user_id = $2)
         ORDER BY t.create_at ASC, t.id ASC
         "#,
     )
@@ -149,6 +159,8 @@ pub async fn list_topics_by_user_id(
             t.content,
             t.images,
             t.create_at,
+            t.location,
+            t.is_public,
             u.username AS user_name,
             u.email AS user_email,
             u.profile AS user_profile,

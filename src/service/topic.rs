@@ -25,6 +25,8 @@ pub async fn create(user_id: i32, ipt: CreateTopicInput) -> Result<(), ServiceEr
         &ipt.content,
         is_top,
         images_json.as_deref(),
+        &ipt.location,
+        ipt.is_public,
     )
     .await?;
 

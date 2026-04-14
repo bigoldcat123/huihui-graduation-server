@@ -48,6 +48,8 @@ pub struct CreateTopicInput {
     pub content: String,
     pub images: Option<Vec<String>>,
     pub reply_to_id: Option<i32>,
+    pub location: String,
+    pub is_public: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

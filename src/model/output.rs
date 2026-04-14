@@ -24,6 +24,8 @@ pub struct Topic {
     pub content: String,
     pub images: Option<Vec<String>>,
     pub create_at: String,
+    pub location: String,
+    pub is_public: bool,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -42,6 +44,8 @@ pub struct TopicListItem {
     pub content: String,
     pub images: Option<Vec<String>>,
     pub create_at: String,
+    pub location: String,
+    pub is_public: bool,
     pub user_info: TopicUserInfo,
     pub comment_count: i64,
     pub like_count: i64,
@@ -158,6 +162,8 @@ impl From<raw::Topic> for Topic {
                 .images
                 .and_then(|images| serde_json::from_str::<Vec<String>>(&images).ok()),
             create_at: topic.create_at.format("%Y-%m-%d").to_string(),
+            location: topic.location,
+            is_public: topic.is_public,
         }
     }
 }
@@ -173,6 +179,8 @@ impl From<raw::TopicWithStats> for TopicListItem {
                 .images
                 .and_then(|images| serde_json::from_str::<Vec<String>>(&images).ok()),
             create_at: topic.create_at.format("%Y-%m-%d").to_string(),
+            location: topic.location,
+            is_public: topic.is_public,
             user_info: TopicUserInfo {
                 id: topic.user_id,
                 name: topic.user_name,

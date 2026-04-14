@@ -37,6 +37,8 @@ pub struct Topic {
     pub content: String,
     pub images: Option<String>,
     pub create_at: DateTime<Local>,
+    pub location: String,
+    pub is_public: bool,
 }
 
 #[derive(Debug, Clone, FromRow)]
@@ -47,6 +49,8 @@ pub struct TopicWithStats {
     pub content: String,
     pub images: Option<String>,
     pub create_at: DateTime<Local>,
+    pub location: String,
+    pub is_public: bool,
     pub user_name: String,
     pub user_email: String,
     pub user_profile: Option<String>,
