@@ -24,7 +24,8 @@ pub fn food_handlers() -> Vec<HandlerModifier> {
         food::consecutive_suggest,
         food::list_foods,
         food::create_food,
-        food::update_food
+        food::update_food,
+        food::get_food_attribute
     )
 }
 

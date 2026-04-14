@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod error;
 pub mod food;
+pub mod food_attribute;
 pub mod topic;
 pub mod tag;
 pub mod restaurant;
