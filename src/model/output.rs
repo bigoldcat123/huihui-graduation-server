@@ -206,3 +206,5 @@ impl From<raw::Restaurant> for RestaurantSimple {
         }
     }
 }
+
+pub use crate::source::food_attribute::FoodAttributeRow as FoodAttribute;

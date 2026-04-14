@@ -162,3 +162,5 @@ pub struct AddTodoLogInput {
     pub current_status: String,
     pub log_content: String,
 }
+
+pub use crate::source::food_attribute::FoodAttributeRow;
