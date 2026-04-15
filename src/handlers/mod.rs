@@ -2,6 +2,7 @@ use faithea::{handlers, server::HandlerModifier};
 
 pub mod auth;
 pub mod food;
+pub mod food_comment;
 pub mod static_files;
 pub mod upload;
 pub mod topic;
@@ -26,6 +27,14 @@ pub fn food_handlers() -> Vec<HandlerModifier> {
         food::create_food,
         food::update_food,
         food::get_food_attribute
+    )
+}
+
+pub fn food_comment_handlers() -> Vec<HandlerModifier> {
+    handlers!(
+        food_comment::get_food_comments,
+        food_comment::create_food_comment,
+        food_comment::toggle_comment_thumb
     )
 }
 
