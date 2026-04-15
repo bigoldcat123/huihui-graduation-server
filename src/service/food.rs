@@ -13,36 +13,50 @@ pub async fn init_suggest() -> Result<Vec<FoodRow>, ServiceError> {
     Ok(foods)
 }
 
-pub async fn recommendation(_user_id: i32, is_random: Option<String>) -> Result<Vec<FoodRow>, ServiceError> {
-    if is_random.is_some() {
-        let foods = source::food::list_random_foods(10).await?;
-        return Ok(foods);
-    }
+pub async fn recommendation(_user_id: i32, is_random: Option<String>) -> Result<Vec<FoodWithRestaurant>, ServiceError> {
+    let foods = if is_random.is_some() {
+        source::food::list_random_foods(10).await?
+    } else {
+        let foods = source::food::list_user_liked_foods(_user_id).await?;
+        let food_tag = cal_food_tags(&foods).await?;
 
-    let foods = source::food::list_user_liked_foods(_user_id).await?;
-    let food_tag = cal_food_tags(&foods).await?;
+        //1. calculate user's food preference
+        let user_profile = cal_user_profile(food_tag);
+        //2. calculate all food's preference
+        let all_foods = source::food::list_foods().await?;
+        let all_food_tag = cal_food_tags(&all_foods).await?;
+        let food_factor = cal_food_factor(&user_profile, &all_food_tag);
+        //3. take all food above 0.5
+        let mut filtered_foods = all_foods.iter().filter(|x| food_factor[&x.id] >= 0.5).cloned().collect::<Vec<_>>();
+        let mut left_foods = all_foods.iter().filter(|x| food_factor[&x.id] < 0.5).cloned().collect::<Vec<_>>();
+        //4. take 10 randomly
+        if filtered_foods.len() < 10 {
+            left_foods.shuffle(&mut rand::rng());
+            while filtered_foods.len() < 10 {
 
-    //1. calculate user's food preference
-    let user_profile = cal_user_profile(food_tag);
-    //2. calculate all food's preference
-    let all_foods = source::food::list_foods().await?;
-    let all_food_tag = cal_food_tags(&all_foods).await?;
-    let food_factor = cal_food_factor(&user_profile, &all_food_tag);
-    //3. take all food above 0.5
-    let mut filtered_foods = all_foods.iter().filter(|x| food_factor[&x.id] >= 0.5).cloned().collect::<Vec<_>>();
-    let mut left_foods = all_foods.iter().filter(|x| food_factor[&x.id] < 0.5).cloned().collect::<Vec<_>>();
-    //4. take 10 randomly
-    if filtered_foods.len() < 10 {
-        left_foods.shuffle(&mut rand::rng());
-        while filtered_foods.len() < 10 {
-
-            if let Some(food) = left_foods.pop() {
-                filtered_foods.push(food);
+                if let Some(food) = left_foods.pop() {
+                    filtered_foods.push(food);
+                }
             }
         }
+        filtered_foods.shuffle(&mut rand::rng());
+        filtered_foods
+    };
+
+    let mut result = Vec::with_capacity(foods.len());
+    for food in foods {
+        let restaurant = source::restaurant::get_restaurant_by_id(food.restaurant_id).await?;
+        result.push(FoodWithRestaurant {
+            id: food.id,
+            restaurant_id: food.restaurant_id,
+            name: food.name,
+            description: food.description,
+            image: food.image,
+            price: food.price,
+            restaurant: Restaurant::from(restaurant),
+        });
     }
-    filtered_foods.shuffle(&mut rand::rng());
-    Ok(filtered_foods)
+    Ok(result)
 }
 
 pub async fn list_liked_foods(user_id: i32) -> Result<Vec<FoodWithRestaurant>, ServiceError> {
