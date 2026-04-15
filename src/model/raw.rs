@@ -83,3 +83,14 @@ pub struct TodoLog {
     pub content: String,
     pub create_time: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct FoodCommentRow {
+    pub id: i32,
+    pub food_id: i32,
+    pub user_id: i32,
+    pub content: String,
+    pub create_time: DateTime<Local>,
+    pub thumb_count: i64,
+    pub thumbed: bool,
+}

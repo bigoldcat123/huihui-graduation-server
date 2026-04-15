@@ -1,5 +1,4 @@
 use faithea::{data::{Json, inbound::FromRequest}, get, post};
-use log::info;
 
 use crate::{model::{ApiResponse, input::{CreateTopicInput, TopicLikeInput}}, service::{self, auth::CurrentUserId}};
 
@@ -11,7 +10,6 @@ async fn list_topics(#[search_param] page: Option<i64>, user_id: FromRequest<Cur
 
 #[post("/")]
 async fn create_topic(ipt: Json<CreateTopicInput>, user_id: FromRequest<CurrentUserId>) {
-    info!("{ipt:?}");
     let res: ApiResponse<_> = service::topic::create(user_id.into_inner().0, ipt.0).await.into();
     res.json()
 }
