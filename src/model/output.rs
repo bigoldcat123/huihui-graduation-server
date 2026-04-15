@@ -216,3 +216,28 @@ impl From<raw::Restaurant> for RestaurantSimple {
 }
 
 pub use crate::source::food_attribute::FoodAttributeRow as FoodAttribute;
+
+#[derive(Serialize, Deserialize)]
+pub struct FoodComment {
+    pub id: i32,
+    pub food_id: i32,
+    pub user_id: i32,
+    pub content: String,
+    pub create_time: String,
+    pub thumb_count: i64,
+    pub thumbed: bool,
+}
+
+impl From<raw::FoodCommentRow> for FoodComment {
+    fn from(row: raw::FoodCommentRow) -> Self {
+        FoodComment {
+            id: row.id,
+            food_id: row.food_id,
+            user_id: row.user_id,
+            content: row.content,
+            create_time: row.create_time.format("%Y-%m-%d %H:%M:%S").to_string(),
+            thumb_count: row.thumb_count,
+            thumbed: row.thumbed,
+        }
+    }
+}
