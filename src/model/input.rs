@@ -180,3 +180,17 @@ pub struct SetCalorieGoalInput {
     pub daily_calorie_goal: f32,
     pub effective_from: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct MealRecordInput {
+    pub meal_type: String,
+    pub source_type: String,
+    pub total_calories: f32,
+    pub note: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct InsertMealRecordFromFoodInput {
+    pub food_id: i32,
+    pub meal_type: String,
+}

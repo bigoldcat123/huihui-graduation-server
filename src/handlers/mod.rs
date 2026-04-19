@@ -73,7 +73,7 @@ pub fn user_calorie_goal_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn meal_record_handlers() -> Vec<HandlerModifier> {
-    handlers!(meal_record::get_today)
+    handlers!(meal_record::get_today, meal_record::create, meal_record::insert_from_inner_food)
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {
