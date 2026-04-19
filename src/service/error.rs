@@ -5,6 +5,7 @@ pub enum ServiceError {
     JwtError(jsonwebtoken::errors::Error),
     JsonError(serde_json::Error),
     PermissionDenied(String),
+    InvalidInput(String),
 }
 
 impl From<sqlx::Error> for ServiceError {

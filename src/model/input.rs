@@ -174,3 +174,9 @@ pub struct UserProfileInput {
     pub birth_date: String,
     pub gender: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SetCalorieGoalInput {
+    pub daily_calorie_goal: f32,
+    pub effective_from: String,
+}

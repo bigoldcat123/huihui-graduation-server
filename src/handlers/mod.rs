@@ -10,6 +10,7 @@ pub mod tag;
 pub mod restaurant;
 pub mod suggestion;
 pub mod user_profile;
+pub mod user_calorie_goal;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -64,6 +65,10 @@ pub fn tag_handlers() -> Vec<HandlerModifier> {
 
 pub fn user_profile_handlers() -> Vec<HandlerModifier> {
     handlers!(user_profile::get, user_profile::update)
+}
+
+pub fn user_calorie_goal_handlers() -> Vec<HandlerModifier> {
+    handlers!(user_calorie_goal::get, user_calorie_goal::set)
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {

@@ -264,3 +264,24 @@ pub struct UserProfileOutput {
     pub birth_date: Option<String>,
     pub gender: String,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct UserCalorieGoalOutput {
+    pub id: i32,
+    pub user_id: i32,
+    pub daily_calorie_goal: f32,
+    pub effective_from: String,
+    pub effective_to: Option<String>,
+}
+
+impl From<raw::UserCalorieGoal> for UserCalorieGoalOutput {
+    fn from(row: raw::UserCalorieGoal) -> Self {
+        UserCalorieGoalOutput {
+            id: row.id,
+            user_id: row.user_id,
+            daily_calorie_goal: row.daily_calorie_goal,
+            effective_from: row.effective_from.format("%Y-%m-%d").to_string(),
+            effective_to: row.effective_to.map(|d| d.format("%Y-%m-%d").to_string()),
+        }
+    }
+}

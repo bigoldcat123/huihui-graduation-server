@@ -106,3 +106,14 @@ pub struct UserProfile {
     pub created_at: DateTime<Local>,
     pub updated_at: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct UserCalorieGoal {
+    pub id: i32,
+    pub user_id: i32,
+    pub daily_calorie_goal: f32,
+    pub effective_from: chrono::NaiveDate,
+    pub effective_to: Option<chrono::NaiveDate>,
+    pub created_at: DateTime<Local>,
+    pub updated_at: DateTime<Local>,
+}
