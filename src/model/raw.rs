@@ -94,3 +94,15 @@ pub struct FoodCommentRow {
     pub thumb_count: i64,
     pub thumbed: bool,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct UserProfile {
+    pub id: i32,
+    pub user_id: i32,
+    pub height_cm: f64,
+    pub weight_kg: f64,
+    pub birth_date: Option<chrono::NaiveDate>,
+    pub gender: String,
+    pub created_at: DateTime<Local>,
+    pub updated_at: DateTime<Local>,
+}

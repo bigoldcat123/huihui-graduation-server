@@ -9,3 +9,4 @@ pub mod suggestion;
 pub mod todo_log;
 pub mod food_attribute;
 pub mod food_comment;
+pub mod user_profile;

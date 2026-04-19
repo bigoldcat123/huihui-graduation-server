@@ -8,3 +8,4 @@ pub mod tag;
 pub mod restaurant;
 pub mod suggestion;
 pub mod rc;
+pub mod user_profile;

@@ -166,3 +166,11 @@ pub struct AddTodoLogInput {
 }
 
 pub use crate::source::food_attribute::FoodAttributeRow;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UserProfileInput {
+    pub height_cm: f64,
+    pub weight_kg: f64,
+    pub birth_date: String,
+    pub gender: String,
+}

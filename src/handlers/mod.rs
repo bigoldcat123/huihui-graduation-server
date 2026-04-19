@@ -9,6 +9,7 @@ pub mod topic;
 pub mod tag;
 pub mod restaurant;
 pub mod suggestion;
+pub mod user_profile;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -59,6 +60,10 @@ pub fn topic_handlers() -> Vec<HandlerModifier> {
 
 pub fn tag_handlers() -> Vec<HandlerModifier> {
     handlers!(tag::list_tags, tag::create_tag, tag::list_liked_values)
+}
+
+pub fn user_profile_handlers() -> Vec<HandlerModifier> {
+    handlers!(user_profile::get, user_profile::update)
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {

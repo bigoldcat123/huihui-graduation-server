@@ -241,3 +241,26 @@ impl From<raw::FoodCommentRow> for FoodComment {
         }
     }
 }
+
+impl From<raw::UserProfile> for UserProfileOutput {
+    fn from(row: raw::UserProfile) -> Self {
+        UserProfileOutput {
+            id: row.id,
+            user_id: row.user_id,
+            height_cm: row.height_cm,
+            weight_kg: row.weight_kg,
+            birth_date: row.birth_date.map(|d| d.format("%Y-%m-%d").to_string()),
+            gender: row.gender,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UserProfileOutput {
+    pub id: i32,
+    pub user_id: i32,
+    pub height_cm: f64,
+    pub weight_kg: f64,
+    pub birth_date: Option<String>,
+    pub gender: String,
+}
