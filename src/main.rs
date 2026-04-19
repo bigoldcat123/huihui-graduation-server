@@ -1,5 +1,5 @@
 use faithea::{get, handlers, server::HttpServer};
-use huihui_server::{handlers::{auth_handlers, food_handlers, food_comment_handlers, restaurant_handlers, static_handlers, suggestion_handlers, tag_handlers, topic_handlers, upload_handlers, user_profile_handlers, user_calorie_goal_handlers}, init_db};
+use huihui_server::{handlers::{auth_handlers, food_handlers, food_comment_handlers, restaurant_handlers, static_handlers, suggestion_handlers, tag_handlers, topic_handlers, upload_handlers, user_profile_handlers, user_calorie_goal_handlers, meal_record_handlers}, init_db};
 
 #[get("/")]
 async fn hello() {
@@ -20,6 +20,7 @@ async fn main() {
         .mount("/tag", tag_handlers())
         .mount("/user/profile", user_profile_handlers())
         .mount("/user/calorie-goal", user_calorie_goal_handlers())
+        .mount("/meal-record", meal_record_handlers())
         .mount("/restaurant", restaurant_handlers())
         .mount("/suggestion", suggestion_handlers())
         .mount("/static", static_handlers())

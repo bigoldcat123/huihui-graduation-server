@@ -285,3 +285,28 @@ impl From<raw::UserCalorieGoal> for UserCalorieGoalOutput {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct MealRecordOutput {
+    pub id: i32,
+    pub user_id: i32,
+    pub meal_type: String,
+    pub source_type: String,
+    pub total_calories: f32,
+    pub note: Option<String>,
+    pub created_at: String,
+}
+
+impl From<raw::MealRecord> for MealRecordOutput {
+    fn from(row: raw::MealRecord) -> Self {
+        MealRecordOutput {
+            id: row.id,
+            user_id: row.user_id,
+            meal_type: row.meal_type,
+            source_type: row.source_type,
+            total_calories: row.total_calories,
+            note: row.note,
+            created_at: row.created_at.format("%Y-%m-%d %H:%M:%S").to_string(),
+        }
+    }
+}

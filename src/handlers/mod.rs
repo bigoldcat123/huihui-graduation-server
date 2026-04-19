@@ -11,6 +11,7 @@ pub mod restaurant;
 pub mod suggestion;
 pub mod user_profile;
 pub mod user_calorie_goal;
+pub mod meal_record;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -69,6 +70,10 @@ pub fn user_profile_handlers() -> Vec<HandlerModifier> {
 
 pub fn user_calorie_goal_handlers() -> Vec<HandlerModifier> {
     handlers!(user_calorie_goal::get, user_calorie_goal::set)
+}
+
+pub fn meal_record_handlers() -> Vec<HandlerModifier> {
+    handlers!(meal_record::get_today)
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {

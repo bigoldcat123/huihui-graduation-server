@@ -117,3 +117,15 @@ pub struct UserCalorieGoal {
     pub created_at: DateTime<Local>,
     pub updated_at: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct MealRecord {
+    pub id: i32,
+    pub user_id: i32,
+    pub meal_type: String,
+    pub source_type: String,
+    pub total_calories: f32,
+    pub note: Option<String>,
+    pub created_at: DateTime<Local>,
+    pub updated_at: DateTime<Local>,
+}
