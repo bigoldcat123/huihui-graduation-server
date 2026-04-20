@@ -121,3 +121,39 @@ Create a meal record from an inner food. Calories are fetched from food_attribut
   }
 }
 ```
+
+---
+
+## POST /meal-record/outer
+
+Create a meal record from an outer (external) food. The user provides calories directly.
+
+**Request Body:**
+```json
+{
+  "meal_type": "lunch",
+  "calories": 650.0
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `meal_type` | string | Yes | One of: `breakfast`, `lunch`, `dinner`, `snack` |
+| `calories` | float | Yes | Total calories for this meal |
+
+**Response:**
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 4,
+    "user_id": 1,
+    "meal_type": "lunch",
+    "source_type": "Outer",
+    "total_calories": 650.0,
+    "note": null,
+    "created_at": "2026-04-19 13:00:00"
+  }
+}
+```

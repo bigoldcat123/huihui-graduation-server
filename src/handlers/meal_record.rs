@@ -1,6 +1,8 @@
+use faithea::data::inbound::multipart::Multipart;
 use faithea::{data::Json, get, post};
 use faithea::data::inbound::FromRequest;
 
+use crate::model::input::OuterFoodInfoInput;
 use crate::{
     model::{ApiResponse, input::{MealRecordInput, InsertMealRecordFromFoodInput}},
     service::{self, auth::CurrentUserId},
@@ -24,5 +26,12 @@ async fn create(user_id: FromRequest<CurrentUserId>, ipt: Json<MealRecordInput>)
 async fn insert_from_inner_food(user_id: FromRequest<CurrentUserId>, ipt: Json<InsertMealRecordFromFoodInput>) {
     let res: ApiResponse<_> =
         service::meal_record::insert_from_inner_food(user_id.into_inner().0, ipt.0).await.into();
+    res.json()
+}
+
+#[post("/outer")]
+async fn insert_from_outer_food(user_id:FromRequest<CurrentUserId>,ipt:Json<OuterFoodInfoInput>) {
+    let res: ApiResponse<_> =
+        service::meal_record::insert_from_outer_food(user_id.into_inner().0, ipt.0).await.into();
     res.json()
 }

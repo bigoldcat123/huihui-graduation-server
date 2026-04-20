@@ -1,5 +1,5 @@
 use crate::{
-    model::{input::{MealRecordInput, InsertMealRecordFromFoodInput}, output::MealRecordOutput},
+    model::{input::{InsertMealRecordFromFoodInput, MealRecordInput, OuterFoodInfoInput}, output::MealRecordOutput},
     service::error::ServiceError,
     source,
 };
@@ -37,6 +37,23 @@ pub async fn insert_from_inner_food(
         &input.meal_type,
         "Inner",
         attr.calories as f32,
+        None,
+    )
+    .await?;
+    Ok(record.into())
+}
+
+
+
+pub async fn insert_from_outer_food(
+    user_id: i32,
+    input: OuterFoodInfoInput,
+) -> Result<MealRecordOutput, ServiceError> {
+    let record = source::meal_record::create_meal_record(
+        user_id,
+        &input.meal_type,
+        "Outer",
+        input.calories as f32,
         None,
     )
     .await?;

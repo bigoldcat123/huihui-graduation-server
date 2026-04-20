@@ -1,3 +1,4 @@
+use faithea::{MultipartData, data::inbound::multipart::MultiPartFile};
 use serde::{Deserialize, Serialize};
 
 
@@ -214,4 +215,11 @@ pub struct CreateExerciseRecordInput {
     pub duration_minutes: i32,
     pub body_weight_kg: f32,
     pub occurred_at: String,
+}
+
+
+#[derive(Debug,Deserialize,Serialize)]
+pub struct OuterFoodInfoInput {
+    pub meal_type:String,
+    pub calories:f32
 }

@@ -14,6 +14,7 @@ pub mod user_calorie_goal;
 pub mod meal_record;
 pub mod exercise_type;
 pub mod exercise_record;
+pub mod food_recog;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -75,7 +76,7 @@ pub fn user_calorie_goal_handlers() -> Vec<HandlerModifier> {
 }
 
 pub fn meal_record_handlers() -> Vec<HandlerModifier> {
-    handlers!(meal_record::get_today, meal_record::create, meal_record::insert_from_inner_food)
+    handlers!(meal_record::get_today, meal_record::create, meal_record::insert_from_inner_food,meal_record::insert_from_outer_food)
 }
 
 pub fn exercise_type_handlers() -> Vec<HandlerModifier> {
@@ -109,4 +110,7 @@ pub fn suggestion_handlers() -> Vec<HandlerModifier> {
         suggestion::move_suggestion_to_next_stage,
         suggestion::add_todo_log
     )
+}
+pub fn food_recog_handlers() -> Vec<HandlerModifier> {
+    handlers!()
 }
