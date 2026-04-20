@@ -310,3 +310,20 @@ impl From<raw::MealRecord> for MealRecordOutput {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct ExerciseTypeOutput {
+    pub id: i32,
+    pub name: String,
+    pub met_value: f32,
+}
+
+impl From<raw::ExerciseType> for ExerciseTypeOutput {
+    fn from(row: raw::ExerciseType) -> Self {
+        ExerciseTypeOutput {
+            id: row.id,
+            name: row.name,
+            met_value: row.met_value,
+        }
+    }
+}

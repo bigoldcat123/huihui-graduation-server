@@ -11,3 +11,4 @@ pub mod rc;
 pub mod user_profile;
 pub mod user_calorie_goal;
 pub mod meal_record;
+pub mod exercise_type;

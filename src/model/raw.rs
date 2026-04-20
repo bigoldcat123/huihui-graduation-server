@@ -129,3 +129,12 @@ pub struct MealRecord {
     pub created_at: DateTime<Local>,
     pub updated_at: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct ExerciseType {
+    pub id: i32,
+    pub name: String,
+    pub met_value: f32,
+    pub created_at: DateTime<Local>,
+    pub updated_at: DateTime<Local>,
+}
