@@ -327,3 +327,34 @@ impl From<raw::ExerciseType> for ExerciseTypeOutput {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct ExerciseRecordOutput {
+    pub id: i32,
+    pub user_id: i32,
+    pub exercise_type_id: i32,
+    pub exercise_name_snapshot: String,
+    pub met_value_snapshot: f32,
+    pub duration_minutes: i32,
+    pub body_weight_kg: f32,
+    pub calories_burned: f32,
+    pub occurred_at: String,
+    pub created_at: String,
+}
+
+impl From<raw::ExerciseRecord> for ExerciseRecordOutput {
+    fn from(row: raw::ExerciseRecord) -> Self {
+        ExerciseRecordOutput {
+            id: row.id,
+            user_id: row.user_id,
+            exercise_type_id: row.exercise_type_id,
+            exercise_name_snapshot: row.exercise_name_snapshot,
+            met_value_snapshot: row.met_value_snapshot,
+            duration_minutes: row.duration_minutes,
+            body_weight_kg: row.body_weight_kg,
+            calories_burned: row.calories_burned,
+            occurred_at: row.occurred_at.format("%Y-%m-%d %H:%M:%S").to_string(),
+            created_at: row.created_at.format("%Y-%m-%d %H:%M:%S").to_string(),
+        }
+    }
+}

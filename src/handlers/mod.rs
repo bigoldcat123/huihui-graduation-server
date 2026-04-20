@@ -13,6 +13,7 @@ pub mod user_profile;
 pub mod user_calorie_goal;
 pub mod meal_record;
 pub mod exercise_type;
+pub mod exercise_record;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -79,6 +80,10 @@ pub fn meal_record_handlers() -> Vec<HandlerModifier> {
 
 pub fn exercise_type_handlers() -> Vec<HandlerModifier> {
     handlers!(exercise_type::list, exercise_type::get_by_id, exercise_type::create, exercise_type::update, exercise_type::delete)
+}
+
+pub fn exercise_record_handlers() -> Vec<HandlerModifier> {
+    handlers!(exercise_record::get_today, exercise_record::get_all, exercise_record::create)
 }
 
 pub fn restaurant_handlers() -> Vec<HandlerModifier> {

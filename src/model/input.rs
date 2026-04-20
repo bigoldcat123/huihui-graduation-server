@@ -207,3 +207,11 @@ pub struct UpdateExerciseTypeInput {
     pub name: String,
     pub met_value: f32,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreateExerciseRecordInput {
+    pub exercise_type_id: i32,
+    pub duration_minutes: i32,
+    pub body_weight_kg: f32,
+    pub occurred_at: String,
+}

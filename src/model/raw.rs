@@ -138,3 +138,18 @@ pub struct ExerciseType {
     pub created_at: DateTime<Local>,
     pub updated_at: DateTime<Local>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct ExerciseRecord {
+    pub id: i32,
+    pub user_id: i32,
+    pub exercise_type_id: i32,
+    pub exercise_name_snapshot: String,
+    pub met_value_snapshot: f32,
+    pub duration_minutes: i32,
+    pub body_weight_kg: f32,
+    pub calories_burned: f32,
+    pub occurred_at: DateTime<Local>,
+    pub created_at: DateTime<Local>,
+    pub updated_at: DateTime<Local>,
+}
