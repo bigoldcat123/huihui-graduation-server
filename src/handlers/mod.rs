@@ -15,6 +15,7 @@ pub mod meal_record;
 pub mod exercise_type;
 pub mod exercise_record;
 pub mod food_recog;
+pub mod image_search;
 
 
 pub fn auth_handlers() -> Vec<HandlerModifier> {
@@ -113,4 +114,12 @@ pub fn suggestion_handlers() -> Vec<HandlerModifier> {
 }
 pub fn food_recog_handlers() -> Vec<HandlerModifier> {
     handlers!()
+}
+
+pub fn image_search_handlers() -> Vec<HandlerModifier> {
+    handlers!(
+        image_search::image_health,
+        image_search::image_insert,
+        image_search::image_search
+    )
 }

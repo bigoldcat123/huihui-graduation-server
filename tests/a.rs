@@ -10,3 +10,21 @@ fn feature() {
     let t = Local::now();
     println!("{}",t);
 }
+
+#[tokio::test]
+async fn feature2() {
+    let client = reqwest::Client::new();
+    let part = reqwest::multipart::Part::bytes(vec![1,2,3,4,5,])
+        .file_name("a.png");
+
+    let form = reqwest::multipart::Form::new()
+        .part("image", part);
+
+    let res = client
+        .post("http://127.0.0.1:8080/image")
+        .multipart(form)
+        .send()
+        .await.unwrap();
+    let res = res.text().await.unwrap();
+    println!("res -> {res}");
+}
