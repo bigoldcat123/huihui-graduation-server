@@ -1,18 +1,26 @@
 use crate::service::error::ServiceError;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fs;
 
 const EXTERNAL_IMAGE_SERVICE_URL: &str = "http://127.0.0.1:8080/image";
 const INSERT_ENDPOINT: &str = "http://127.0.0.1:8080/image/insert";
 
-#[derive(Deserialize)]
-struct ExternalResponse {
-    _code: i32,
-    _message: String,
-    data: Option<i64>,
+#[derive(Deserialize, Serialize,Debug)]
+pub struct ExternalSearchResponse {
+    description: String,
+    cal: i64,
+    image_url: String,
+    food_name: String,
 }
 
-pub async fn insert_image(image_path: &str, cal: i32) -> Result<(), ServiceError> {
+#[derive(Deserialize, Debug)]
+struct ExternalApiResponse {
+    code: i32,
+    message: String,
+    data: ExternalSearchResponse,
+}
+
+pub async fn insert_image(image_path: &str, cal: i32, food_name: &str, description: &str) -> Result<(), ServiceError> {
     let client = reqwest::Client::new();
 
     let file_bytes = fs::read(image_path)
@@ -23,7 +31,9 @@ pub async fn insert_image(image_path: &str, cal: i32) -> Result<(), ServiceError
 
     let form = reqwest::multipart::Form::new()
         .part("image", part)
-        .text("cal", cal.to_string());
+        .text("cal", cal.to_string())
+        .text("food_name", food_name.to_string())
+        .text("description", description.to_string());
 
     let resp = client
         .post(INSERT_ENDPOINT)
@@ -42,7 +52,7 @@ pub async fn insert_image(image_path: &str, cal: i32) -> Result<(), ServiceError
     }
 }
 
-pub async fn search_image(image_path: &str, file_name: Option<String>) -> Result<i64, ServiceError> {
+pub async fn search_image(image_path: &str, file_name: Option<String>) -> Result<ExternalSearchResponse, ServiceError> {
     let client = reqwest::Client::new();
 
     let file_bytes = fs::read(image_path)
@@ -70,9 +80,8 @@ pub async fn search_image(image_path: &str, file_name: Option<String>) -> Result
     let bytes = resp.bytes().await
         .map_err(|e| ServiceError::InvalidInput(format!("read response failed: {}", e)))?;
 
-    let external: ExternalResponse = serde_json::from_slice(&bytes)
+    let external: ExternalApiResponse = serde_json::from_slice(&bytes)
         .map_err(|e| ServiceError::JsonError(e))?;
-
-    external.data
-        .ok_or_else(|| ServiceError::InvalidInput("no calorie data returned".to_string()))
+    println!("{external:?}");
+    Ok(external.data)
 }

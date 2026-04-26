@@ -10,6 +10,8 @@ use crate::service::image_search;
 struct InsertInput {
     image: MultiPartFile,
     cal: i32,
+    food_name: String,
+    description: String,
 }
 
 #[derive(MultipartData, Debug)]
@@ -29,8 +31,10 @@ async fn image_insert(
     let input = files.into_inner();
     let image_path = input.image.temp_path.clone();
     let cal = input.cal;
+    let food_name = input.food_name;
+    let description = input.description;
 
-    match image_search::insert_image(&image_path, cal).await {
+    match image_search::insert_image(&image_path, cal, &food_name, &description).await {
         Ok(()) => ApiResponse::ok().json(),
         Err(e) => ApiResponse::<()>::err(format!("{:?}", e)).json(),
     }
@@ -39,13 +43,19 @@ async fn image_insert(
 #[post("/")]
 async fn image_search(
     files: Multipart<SearchInput>,
-) -> faithea::data::Json<ApiResponse<i64>> {
+) -> faithea::data::Json<ApiResponse<image_search::ExternalSearchResponse>> {
     let input = files.into_inner();
     let image_path = input.image.temp_path.clone();
     let file_name = input.image.file_name.clone();
 
     match image_search::search_image(&image_path, file_name).await {
-        Ok(cal) => ApiResponse::ok().data(cal).json(),
-        Err(e) => ApiResponse::<i64>::err(format!("{:?}", e)).json(),
+        Ok(result) => {
+            log::info!("{result:?}");
+            ApiResponse::ok().data(result).json()
+        },
+        Err(e) => {
+            log::info!("{e:?}");
+            ApiResponse::<image_search::ExternalSearchResponse>::err(format!("{:?}", e)).json()
+        },
     }
 }
